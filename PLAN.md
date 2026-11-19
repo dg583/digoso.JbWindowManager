@@ -1,57 +1,42 @@
 # LayoutManager – Plan & Kontext
 
-Stand: 2026-11-19 · Status: Projektgerüst steht, Kernanforderung geklärt (Profilverwaltung), Spezifikation läuft noch (Brainstorming), kein Code.
+Stand: 2026-11-19 · Status: Funktion umgesetzt und in Rider 2026.3 (Sandbox) manuell bestätigt: Profile speichern, wechseln, umbenennen, löschen. Offen: Abschlusstests (Task 8), Review, echte Plugin-ID/Vendor.
 
-Weitere Erkenntnisse und Recherche-Ergebnisse liegen nach Thema sortiert unter `docs/wissen/` (siehe `CLAUDE.md`).
+Weitere Erkenntnisse und Recherche-Ergebnisse liegen nach Thema sortiert unter `docs/wissen/` (siehe `CLAUDE.md`). Design: `docs/superpowers/specs/2026-11-19-profile-design.md`, Umsetzungsplan: `docs/superpowers/plans/2026-11-19-toolwindow-profile.md`.
 
 ## Ziel
-JetBrains-Plugin für **Rider**: Das aktuelle IDE-Layout (Toolfenster, Docking, Größen, ggf. Editor-Splits) unter einem **Namen speichern**. Es sollen **mehrere Layouts** speicherbar sein, und gespeicherte Layouts sollen **wieder geladen** werden können.
+JetBrains-Plugin für **Rider**: Die Anordnung der Toolfenster als benanntes **Profil** speichern, mehrere Profile verwalten (anlegen, wechseln, umbenennen, löschen). Riders `Window > Layouts` reicht dafür nicht, weil man dort keine Profile verwalten kann.
 
 ## Entscheidungen
 - **Kotlin + Gradle** (IntelliJ Platform Gradle Plugin). Ein reines .NET-Plugin ist nicht möglich: Layouts liegen im JVM-Frontend der IDE (z. B. `ToolWindowManager`). Das .NET-/ReSharper-Backend hat darauf keinen Zugriff.
-- Kein .NET-Projekt, solange es keinen Zweck hat (z. B. Solution-/Code-Analyse-Wissen im Backend).
-- Ziel-IDE: Rider 2026.3 (`sinceBuild = 263`), JDK 21.
-- Entwicklungs-IDE: IntelliJ IDEA (Community reicht). Rider zum Testen über `runIde` (Sandbox).
-- Git-Repo, Branch `main`. `.gitignore` deckt .NET, Gradle/Kotlin, JetBrains und VS Code ab.
-
-## Kernanforderung (geklärt 2026-11-19)
-Riders `Window > Layouts` reicht nicht: Dort lassen sich nur einzelne Layouts speichern/laden, aber **keine Profile verwalten**. Das Plugin soll daher **Profile verwalten** können (anlegen, benennen, umbenennen, löschen, wechseln; ggf. duplizieren, exportieren/importieren). Details der Profilverwaltung (Umfang, Ablage, Bedienung) sind noch zu spezifizieren.
-
-## Geklärt: Umfang, Ablage, Bedienung (Details: `docs/wissen/profile/umfang-und-ablage.md`)
-- **Profil = Toolfenster-Zustand:** je Toolfenster Seite (left/right/bottom/top), Split-Position (z. B. left/top vs. left/bottom), offen/zu, ViewMode, bei abgedockten Fenstern Position. Keine Editor-Splits/offenen Dateien.
-- **Ablage:** global.
-- **Bedienung:** Einstieg in einem bestehenden Menü, z. B. `Window`.
-
-## Offen / zu klären
-- Teilen im Team (Export/Import), Shortcuts: zunächst nicht nötig.
-
-## Entschieden
-- Format **JSON**, Ablage global.
-- Fehlende Toolfenster beim Laden **überspringen**.
-- Bedienung: Untermenü **`Window > Profile`** (Profile wechseln, „Speichern als…“, „Verwalten…“ mit Umbenennen/Löschen).
-
-## Machbarkeit (Details: `docs/wissen/intellij-plattform/toolwindow-api-machbarkeit.md`)
-- Seite, Split, ViewMode, Sichtbarkeit: lesen und setzen über öffentliche `ToolWindow`-API.
-- Fensterposition, Größe, Reihenfolge: nur über interne `DesktopLayout`/`ToolWindowManagerEx` (Risiko: nicht stabil).
-- Alles per Quellcode belegt (Branch 252 und 263, die genutzten Signaturen sind identisch), **nicht in der IDE getestet**. Nächster Schritt: Spike in `runIde`.
-- Echte IDs/Platzhalter: Paketname `com.example.layoutmanager`, Plugin-ID, Vendor `TBD`.
-
-## Zu prüfen beim ersten Sync
-- Versionen bestätigt (Details: `docs/wissen/build/gradle-setup.md`): Gradle-Plugin 2.20.1, Kotlin 2.4.0, Gradle 9.8.0, Rider 2026.3, JDK 21.
-- Gradle-Wrapper ist erzeugt (Gradle 9.8.0), JDK 21 (Temurin) liegt in `~/.jdks`. `./gradlew test buildPlugin` läuft grün (lokale Rider über `riderPath` in `~/.gradle/gradle.properties`).
+- Kein .NET-Projekt, solange es keinen Zweck hat.
+- Ziel-IDE: Rider 2026.3 (`sinceBuild = 263`), JDK 21. Versionen bestätigt: `docs/wissen/build/gradle-setup.md`.
+- Entwicklungs-IDE: IntelliJ IDEA. Rider zum Testen über `runIde` (Sandbox).
+- **Profil = Toolfenster-Zustand:** je Toolfenster Seite (left/right/bottom/top), Split-Position (z. B. left/top vs. left/bottom), offen/zu, ViewMode (`type` + `autoHide`), Größe/Reihenfolge, bei Float/Window die Position. Keine Editor-Splits, keine offenen Dateien.
+- **Ablage:** global, JSON, `<IDE-Config>/layoutmanager/profiles.json`.
+- **Bedienung:** Untermenü `Window > Profile` (Profile wechseln, „Speichern als…“, „Verwalten…“ mit Umbenennen/Löschen).
+- Fehlende Toolfenster beim Anwenden werden übersprungen.
+- **Anwenden über `ToolWindowManagerEx.setLayout`** (interne API `DesktopLayout`): Nur so wird die Fensterposition wiederhergestellt (Spike: `docs/wissen/intellij-plattform/spike-ergebnis.md`). Risiko: interne API kann sich zwischen Versionen ändern. `verifyPlugin` meldet sie (5 Internal-API-Usages) und ist darauf eingestellt, nur echte Brüche als Fehler zu werten.
 
 ## Struktur
 ```
 build.gradle.kts / settings.gradle.kts / gradle.properties
-src/main/kotlin/com/example/layoutmanager/   (leer)
-src/main/resources/META-INF/plugin.xml       (Minimal-Manifest)
+src/main/kotlin/com/example/layoutmanager/
+  model/Profile.kt            Datenmodell (Profile, ToolWindowState, Bounds)
+  store/ProfileStore.kt       JSON lesen/schreiben, Verwaltung (reine Logik)
+  store/ProfileService.kt     App-Service mit globalem Pfad
+  layout/LayoutCapture.kt     Ist-Zustand lesen
+  layout/LayoutApply.kt       Profil anwenden
+  actions/                    Menü, Speichern, Verwalten-Dialog
+src/main/resources/META-INF/plugin.xml
+src/test/kotlin/...           Tests für Store/JSON und Parsing
 ```
-Build: `gradlew buildPlugin` · Sandbox-Test: `gradlew runIde`
+Build und Test: `gradlew test buildPlugin` · Sandbox: `gradlew runIde` · Prüfung: `gradlew verifyPlugin`.
+Lokale Rider statt Download: `riderPath` in `~/.gradle/gradle.properties`.
 
-## Nächste Schritte
-1. Offene Fragen klären, Ansätze abwägen, Design-Doc schreiben (`docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md`) und freigeben lassen.
-2. Danach Implementierungsplan (superpowers:writing-plans).
-3. Erst dann Code. Das Gerüst wurde auf Wunsch des Nutzers vorab angelegt, das Design ist aber noch nicht freigegeben.
+## Offen
+- **Echte Plugin-ID, Paketname und Vendor:** Platzhalter `com.example.layoutmanager` / `TBD`. `verifyPlugin` stummschaltet die Meldung `ForbiddenPluginIdPrefix`, bis das geklärt ist.
+- Nicht im Umfang, bei Bedarf später: Export/Import, Shortcuts, Teilen im Team, Editor-Splits.
 
 ## Arbeitsweise
 - Sprache der Zusammenarbeit: Deutsch.
