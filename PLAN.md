@@ -1,6 +1,6 @@
 # LayoutManager – Plan & Kontext
 
-Stand: 2026-11-19 · Status: Funktion umgesetzt und in Rider 2026.3 (Sandbox) manuell bestätigt: Profile speichern, wechseln, umbenennen, löschen. Offen: Abschlusstests (Task 8), Review, echte Plugin-ID/Vendor.
+Stand: 2026-11-19 · Status: Funktion umgesetzt, getestet (23 Unit-Tests, manuelle Prüfung in Rider 2026.3), Review-Befunde behoben. Offen: echte Plugin-ID/Vendor, Integration des Branches `feature/profile`.
 
 Weitere Erkenntnisse und Recherche-Ergebnisse liegen nach Thema sortiert unter `docs/wissen/` (siehe `CLAUDE.md`). Design: `docs/superpowers/specs/2026-11-19-profile-design.md`, Umsetzungsplan: `docs/superpowers/plans/2026-11-19-toolwindow-profile.md`.
 
