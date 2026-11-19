@@ -17,7 +17,7 @@ class ProfilesActionGroup : ActionGroup() {
     override fun getChildren(e: AnActionEvent?): Array<AnAction> {
         val store = service<ProfileService>().store
         val items = mutableListOf<AnAction>()
-        store.loadError?.let { items += DisabledAction("Profile nicht lesbar (siehe Log)") }
+        store.loadError?.let { items += DisabledAction("Profile nicht lesbar: $it (nach Korrektur IDE neu starten)") }
         store.profiles().mapTo(items) { ApplyProfileAction(it) }
         items += Separator.getInstance()
         items += SaveProfileAction()

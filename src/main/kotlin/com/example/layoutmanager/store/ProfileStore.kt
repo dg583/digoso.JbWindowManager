@@ -5,12 +5,15 @@ import com.example.layoutmanager.model.Profile
 import com.example.layoutmanager.model.ProfileFile
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParseException
+import com.intellij.openapi.diagnostic.Logger
 import java.io.IOException
 import java.nio.file.AtomicMoveNotSupportedException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption.ATOMIC_MOVE
 import java.nio.file.StandardCopyOption.REPLACE_EXISTING
+
+private val LOG = Logger.getInstance(ProfileStore::class.java)
 
 /**
  * Verwaltet die Profile in einer JSON-Datei. Ist die Datei nicht lesbar, bleibt sie unangetastet:
@@ -62,22 +65,31 @@ class ProfileStore(private val file: Path) {
         return try {
             ProfileJson.fromJson(Files.readString(file)).profiles
         } catch (e: IllegalArgumentException) {
-            loadError = e.message
-            emptyList()
+            loadFailed(e)
         } catch (e: IOException) {
-            loadError = e.message
-            emptyList()
+            loadFailed(e)
         }
     }
 
+    private fun loadFailed(e: Exception): List<Profile> {
+        loadError = "${file.fileName}: ${e.message}"
+        LOG.warn("Profile nicht lesbar, Datei bleibt unangetastet: $file", e)
+        return emptyList()
+    }
+
+    /** IO-Fehler werden zu [IllegalStateException], damit die Aufrufer sie als Dialog zeigen können. */
     private fun write(profiles: List<Profile>) {
-        Files.createDirectories(file.parent)
-        val tmp = file.resolveSibling(file.fileName.toString() + ".tmp")
-        Files.writeString(tmp, ProfileJson.toJson(ProfileFile(CURRENT_VERSION, profiles)))
         try {
-            Files.move(tmp, file, REPLACE_EXISTING, ATOMIC_MOVE)
-        } catch (e: AtomicMoveNotSupportedException) {
-            Files.move(tmp, file, REPLACE_EXISTING)
+            Files.createDirectories(file.parent)
+            val tmp = file.resolveSibling(file.fileName.toString() + ".tmp")
+            Files.writeString(tmp, ProfileJson.toJson(ProfileFile(CURRENT_VERSION, profiles)))
+            try {
+                Files.move(tmp, file, REPLACE_EXISTING, ATOMIC_MOVE)
+            } catch (e: AtomicMoveNotSupportedException) {
+                Files.move(tmp, file, REPLACE_EXISTING)
+            }
+        } catch (e: IOException) {
+            throw IllegalStateException("Speichern fehlgeschlagen: ${e.message}", e)
         }
     }
 }
@@ -95,9 +107,16 @@ object ProfileJson {
         } catch (e: JsonParseException) {
             throw IllegalArgumentException("Ungültiges JSON: ${e.message}", e)
         }
-        // Gson setzt fehlende Felder trotz Kotlin-Typ auf null
-        @Suppress("SENSELESS_COMPARISON")
+        // Gson setzt fehlende Felder trotz Kotlin-Typ auf null (und Listenelemente "null" bleiben null)
+        @Suppress("SENSELESS_COMPARISON", "USELESS_IS_CHECK")
         require(file != null && file.profiles != null) { "Profilliste fehlt" }
+        @Suppress("SENSELESS_COMPARISON")
+        require(
+            file.profiles.all { p ->
+                p != null && p.name != null && p.toolWindows != null &&
+                    p.toolWindows.all { s -> s != null && s.id != null && s.anchor != null && s.type != null }
+            },
+        ) { "Profil unvollständig (name, toolWindows, id, anchor oder type fehlt)" }
         require(file.version <= CURRENT_VERSION) { "Dateiversion ${file.version} ist neuer als unterstützt ($CURRENT_VERSION)" }
         return file
     }

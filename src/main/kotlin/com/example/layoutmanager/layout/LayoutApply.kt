@@ -32,13 +32,13 @@ fun applyProfile(project: Project, profile: Profile) {
             LOG.info("Übersprungen (fehlt): ${s.id}")
             continue
         }
-        val anchor = parseAnchor(s.anchor)
-        val type = parseType(s.type)
-        if (anchor == null || type == null) {
-            LOG.warn("Übersprungen (unbekannter Wert anchor=${s.anchor}, type=${s.type}): ${s.id}")
-            continue
-        }
         try {
+            val anchor = parseAnchor(s.anchor)
+            val type = parseType(s.type)
+            if (anchor == null || type == null) {
+                LOG.warn("Übersprungen (unbekannter Wert anchor=${s.anchor}, type=${s.type}): ${s.id}")
+                continue
+            }
             info.anchor = anchor
             info.isSplit = s.split
             info.type = type
@@ -47,7 +47,7 @@ fun applyProfile(project: Project, profile: Profile) {
             info.isAutoHide = s.autoHide
             info.isVisible = s.visible
             info.order = s.order
-            info.weight = s.weight
+            if (s.weight > 0f) info.weight = s.weight // 0 = Feld fehlte in der Datei
             info.floatingBounds = s.bounds?.let { Rectangle(it.x, it.y, it.width, it.height) }
         } catch (t: Throwable) {
             LOG.warn("Fehler beim Anwenden: ${s.id}", t)

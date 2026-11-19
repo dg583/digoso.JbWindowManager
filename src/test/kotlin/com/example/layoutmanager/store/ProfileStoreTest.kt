@@ -128,4 +128,38 @@ class ProfileStoreTest {
         assertThrows(IllegalStateException::class.java) { store.delete("A") }
         assertEquals(text, Files.readString(f))
     }
+
+    // --- Fixes aus dem Review ---
+
+    @Test
+    fun loadErrorNamesTheFile() {
+        val f = file()
+        Files.createDirectories(f.parent)
+        Files.writeString(f, "{kaputt")
+        assertTrue(ProfileStore(f).loadError!!.contains("profiles.json"))
+    }
+
+    @Test
+    fun profileWithoutToolWindowsIsRejected() {
+        assertThrows(IllegalArgumentException::class.java) { ProfileJson.fromJson("""{"version":1,"profiles":[{"name":"A"}]}""") }
+    }
+
+    @Test
+    fun nullProfileIsRejected() {
+        assertThrows(IllegalArgumentException::class.java) { ProfileJson.fromJson("""{"version":1,"profiles":[null]}""") }
+    }
+
+    @Test
+    fun toolWindowWithoutAnchorIsRejected() {
+        val json = """{"version":1,"profiles":[{"name":"A","toolWindows":[{"id":"X","type":"DOCKED"}]}]}"""
+        assertThrows(IllegalArgumentException::class.java) { ProfileJson.fromJson(json) }
+    }
+
+    @Test
+    fun writeFailureBecomesIllegalStateAndKeepsOldState() {
+        val blocker = tmp.newFile("sub") // reguläre Datei dort, wo der Ordner hin müsste
+        val store = ProfileStore(blocker.toPath().resolve("profiles.json"))
+        assertThrows(IllegalStateException::class.java) { store.save(profile("A")) }
+        assertTrue(store.profiles().isEmpty())
+    }
 }
