@@ -1,9 +1,9 @@
-package com.example.layoutmanager.store
+package com.digoso.jbwindowmanager.store
 
-import com.example.layoutmanager.model.Bounds
-import com.example.layoutmanager.model.Profile
-import com.example.layoutmanager.model.ProfileFile
-import com.example.layoutmanager.model.ToolWindowState
+import com.digoso.jbwindowmanager.model.Bounds
+import com.digoso.jbwindowmanager.model.Profile
+import com.digoso.jbwindowmanager.model.ProfileFile
+import com.digoso.jbwindowmanager.model.ToolWindowState
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull

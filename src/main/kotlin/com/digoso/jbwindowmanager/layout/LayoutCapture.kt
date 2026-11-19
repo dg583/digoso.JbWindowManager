@@ -1,8 +1,8 @@
-package com.example.layoutmanager.layout
+package com.digoso.jbwindowmanager.layout
 
-import com.example.layoutmanager.model.Bounds
-import com.example.layoutmanager.model.Profile
-import com.example.layoutmanager.model.ToolWindowState
+import com.digoso.jbwindowmanager.model.Bounds
+import com.digoso.jbwindowmanager.model.Profile
+import com.digoso.jbwindowmanager.model.ToolWindowState
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ex.ToolWindowManagerEx
 

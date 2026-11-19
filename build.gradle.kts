@@ -6,7 +6,7 @@ plugins {
     id("org.jetbrains.intellij.platform") version "2.20.1"
 }
 
-group = "com.example.layoutmanager"
+group = "com.digoso.jbwindowmanager"
 version = "0.1.0"
 
 repositories {
@@ -32,8 +32,6 @@ intellijPlatform {
         ideaVersion { sinceBuild = "263" }
     }
     pluginVerification {
-        // Platzhalter-ID com.example.*: Meldung stummschalten, bis die echte Plugin-ID feststeht
-        freeArgs = listOf("-mute", "ForbiddenPluginIdPrefix")
         // Interne API (DesktopLayout) ist bewusst akzeptiert (nötig für floatingBounds), nur echte Brüche lassen die Prüfung scheitern
         failureLevel = listOf(
             org.jetbrains.intellij.platform.gradle.tasks.VerifyPluginTask.FailureLevel.COMPATIBILITY_PROBLEMS,

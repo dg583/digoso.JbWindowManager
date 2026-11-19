@@ -1,6 +1,6 @@
-package com.example.layoutmanager.layout
+package com.digoso.jbwindowmanager.layout
 
-import com.example.layoutmanager.model.Profile
+import com.digoso.jbwindowmanager.model.Profile
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindowAnchor

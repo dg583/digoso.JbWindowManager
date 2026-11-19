@@ -1,7 +1,7 @@
-package com.example.layoutmanager.actions
+package com.digoso.jbwindowmanager.actions
 
-import com.example.layoutmanager.layout.captureProfile
-import com.example.layoutmanager.store.ProfileService
+import com.digoso.jbwindowmanager.layout.captureProfile
+import com.digoso.jbwindowmanager.store.ProfileService
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent

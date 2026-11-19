@@ -1,8 +1,8 @@
-package com.example.layoutmanager.actions
+package com.digoso.jbwindowmanager.actions
 
-import com.example.layoutmanager.layout.applyProfile
-import com.example.layoutmanager.model.Profile
-import com.example.layoutmanager.store.ProfileService
+import com.digoso.jbwindowmanager.layout.applyProfile
+import com.digoso.jbwindowmanager.model.Profile
+import com.digoso.jbwindowmanager.store.ProfileService
 import com.intellij.openapi.actionSystem.ActionGroup
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction

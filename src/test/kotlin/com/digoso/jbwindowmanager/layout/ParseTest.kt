@@ -1,4 +1,4 @@
-package com.example.layoutmanager.layout
+package com.digoso.jbwindowmanager.layout
 
 import com.intellij.openapi.wm.ToolWindowAnchor
 import com.intellij.openapi.wm.ToolWindowType

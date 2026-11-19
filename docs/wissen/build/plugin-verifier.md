@@ -9,7 +9,7 @@ Stand: 2026-11-19 · Beleg: Lauf gegen die lokale Rider 2026.3 (Build 263.7307.2
 
 ## Konfiguration in `build.gradle.kts`
 - `failureLevel` = `COMPATIBILITY_PROBLEMS` und `INVALID_PLUGIN`: interne API lässt die Prüfung nicht scheitern, echte Brüche schon.
-- `freeArgs = -mute ForbiddenPluginIdPrefix`: Platzhalter-ID `com.example.*` ist laut Verifier nicht erlaubt. Entfernen, sobald die echte Plugin-ID gesetzt ist.
+- Die Platzhalter-ID `com.example.*` lehnte der Verifier ab (`ForbiddenPluginIdPrefix`); mit `com.digoso.jbwindowmanager` ist die Meldung weg, der frühere Mute wurde entfernt.
 - Prüfziel: dieselbe Plattform wie der Build (`riderPath` oder Download).
 
 ## Eigenheiten

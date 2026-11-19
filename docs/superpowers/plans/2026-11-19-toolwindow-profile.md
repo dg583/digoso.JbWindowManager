@@ -11,7 +11,7 @@
 **Spec:** `docs/superpowers/specs/2026-11-19-profile-design.md` (Hintergrund: `docs/wissen/intellij-plattform/toolwindow-api-machbarkeit.md`)
 
 ## Global Constraints
-- Paket `com.example.layoutmanager` (Platzhalter bleibt), Plugin-ID `com.example.layoutmanager`.
+- Paket `com.digoso.jbwindowmanager` (Platzhalter bleibt), Plugin-ID `com.digoso.jbwindowmanager`.
 - Datei: `<PathManager.getConfigPath()>/layoutmanager/profiles.json`, global, Format `{"version":1,"profiles":[…]}`.
 - Menü: Untermenü `Window > Profile` mit Profilliste, „Speichern als…“, „Verwalten…“ (Umbenennen, Löschen).
 - Fehlende Toolfenster beim Anwenden **überspringen**; Anwenden ist best effort (ein Fehler bricht nicht ab).
@@ -33,13 +33,13 @@
 | Datei | Aufgabe |
 |---|---|
 | `build.gradle.kts` (ändern) | Test-Setup, ggf. Gson-Abhängigkeit |
-| `src/main/kotlin/com/example/layoutmanager/model/Profile.kt` | `Profile`, `ToolWindowState`, `Bounds` |
+| `src/main/kotlin/com/digoso/jbwindowmanager/model/Profile.kt` | `Profile`, `ToolWindowState`, `Bounds` |
 | `.../store/ProfileStore.kt` | JSON lesen/schreiben, Verwaltung (reine Logik) |
 | `.../store/ProfileService.kt` | App-Service, der den `ProfileStore` mit dem Config-Pfad bereitstellt |
 | `.../layout/LayoutCapture.kt`, `LayoutApply.kt` | Ist-Zustand lesen, Profil anwenden |
 | `.../actions/ProfilesActionGroup.kt`, `SaveProfileAction.kt`, `ManageProfilesAction.kt`, `ManageProfilesDialog.kt` | Menü und Dialoge |
 | `src/main/resources/META-INF/plugin.xml` (ändern) | Registrierung der Aktionen |
-| `src/test/kotlin/com/example/layoutmanager/store/ProfileStoreTest.kt` | Tests für Store und JSON |
+| `src/test/kotlin/com/digoso/jbwindowmanager/store/ProfileStoreTest.kt` | Tests für Store und JSON |
 
 ---
 
@@ -47,7 +47,7 @@
 
 **Files:**
 - Modify: `build.gradle.kts`
-- Create: Gradle-Wrapper (`gradlew`, `gradlew.bat`, `gradle/wrapper/*`), `src/test/kotlin/com/example/layoutmanager/SmokeTest.kt`
+- Create: Gradle-Wrapper (`gradlew`, `gradlew.bat`, `gradle/wrapper/*`), `src/test/kotlin/com/digoso/jbwindowmanager/SmokeTest.kt`
 
 **Interfaces:**
 - Produces: lauffähiges `gradlew test`, `gradlew buildPlugin`, `gradlew runIde`.
@@ -68,7 +68,7 @@
 Beantwortet die vier offenen Fragen aus dem Design, bevor die endgültigen Bausteine entstehen. Wegwerfcode, wird in Task 5 ersetzt.
 
 **Files:**
-- Create (temporär): `src/main/kotlin/com/example/layoutmanager/actions/SpikeAction.kt`
+- Create (temporär): `src/main/kotlin/com/digoso/jbwindowmanager/actions/SpikeAction.kt`
 - Modify (temporär): `src/main/resources/META-INF/plugin.xml`
 - Create: `docs/wissen/intellij-plattform/spike-ergebnis.md`
 
@@ -88,8 +88,8 @@ Beantwortet die vier offenen Fragen aus dem Design, bevor die endgültigen Baust
 ### Task 3: Datenmodell und JSON
 
 **Files:**
-- Create: `src/main/kotlin/com/example/layoutmanager/model/Profile.kt`, `src/main/kotlin/com/example/layoutmanager/store/ProfileStore.kt` (hier zunächst nur `ProfileJson`)
-- Test: `src/test/kotlin/com/example/layoutmanager/store/ProfileStoreTest.kt`
+- Create: `src/main/kotlin/com/digoso/jbwindowmanager/model/Profile.kt`, `src/main/kotlin/com/digoso/jbwindowmanager/store/ProfileStore.kt` (hier zunächst nur `ProfileJson`)
+- Test: `src/test/kotlin/com/digoso/jbwindowmanager/store/ProfileStoreTest.kt`
 
 **Interfaces:**
 - Produces:
@@ -111,8 +111,8 @@ Beantwortet die vier offenen Fragen aus dem Design, bevor die endgültigen Baust
 ### Task 4: ProfileStore
 
 **Files:**
-- Create: `src/main/kotlin/com/example/layoutmanager/store/ProfileStore.kt` (um `ProfileStore` erweitern), `.../store/ProfileService.kt`
-- Test: `src/test/kotlin/com/example/layoutmanager/store/ProfileStoreTest.kt`
+- Create: `src/main/kotlin/com/digoso/jbwindowmanager/store/ProfileStore.kt` (um `ProfileStore` erweitern), `.../store/ProfileService.kt`
+- Test: `src/test/kotlin/com/digoso/jbwindowmanager/store/ProfileStoreTest.kt`
 
 **Interfaces:**
 - Consumes: `ProfileFile`, `Profile`, `ProfileJson` (Task 3).
@@ -137,7 +137,7 @@ Beantwortet die vier offenen Fragen aus dem Design, bevor die endgültigen Baust
   - `newerVersionFileIsNotOverwritten` → analog mit `{"version":2,"profiles":[]}`.
 - [ ] **Step 2: Tests ausführen.** Erwartet: FAIL (`ProfileStore` unbekannt).
 - [ ] **Step 3: `ProfileStore` implementieren.** Beim ersten Zugriff lesen (fehlende Datei = leer; Lesefehler oder `fromJson`-Exception → `loadError` setzen). Schreiben atomar: in `file.resolveSibling("profiles.json.tmp")` schreiben, dann `Files.move(tmp, file, REPLACE_EXISTING, ATOMIC_MOVE)`; Elternordner vorher anlegen.
-- [ ] **Step 4: `ProfileService` anlegen** (nur Pfadverdrahtung, keine Logik); in `plugin.xml` `<applicationService serviceImplementation="com.example.layoutmanager.store.ProfileService"/>` unter `<extensions defaultExtensionNs="com.intellij">`.
+- [ ] **Step 4: `ProfileService` anlegen** (nur Pfadverdrahtung, keine Logik); in `plugin.xml` `<applicationService serviceImplementation="com.digoso.jbwindowmanager.store.ProfileService"/>` unter `<extensions defaultExtensionNs="com.intellij">`.
 - [ ] **Step 5: Tests ausführen.** Erwartet: PASS.
 - [ ] **Step 6: Commit** (nur nach Rückfrage): `git add src && git commit -m "feat: ProfileStore"`
 
@@ -148,7 +148,7 @@ Beantwortet die vier offenen Fragen aus dem Design, bevor die endgültigen Baust
 Abhängig vom Ergebnis des Spikes (Task 2).
 
 **Files:**
-- Create: `src/main/kotlin/com/example/layoutmanager/layout/LayoutCapture.kt`, `.../layout/LayoutApply.kt`
+- Create: `src/main/kotlin/com/digoso/jbwindowmanager/layout/LayoutCapture.kt`, `.../layout/LayoutApply.kt`
 - Delete: `SpikeAction.kt` und dessen `plugin.xml`-Einträge
 
 **Interfaces:**

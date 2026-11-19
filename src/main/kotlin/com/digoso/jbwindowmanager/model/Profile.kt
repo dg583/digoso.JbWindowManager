@@ -1,4 +1,4 @@
-package com.example.layoutmanager.model
+package com.digoso.jbwindowmanager.model
 
 const val CURRENT_VERSION = 1
 

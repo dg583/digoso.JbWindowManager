@@ -1,4 +1,4 @@
-package com.example.layoutmanager
+package com.digoso.jbwindowmanager
 
 import org.junit.Assert.assertTrue
 import org.junit.Test

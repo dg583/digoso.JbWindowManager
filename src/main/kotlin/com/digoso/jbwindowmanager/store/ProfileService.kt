@@ -1,4 +1,4 @@
-package com.example.layoutmanager.store
+package com.digoso.jbwindowmanager.store
 
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.components.Service

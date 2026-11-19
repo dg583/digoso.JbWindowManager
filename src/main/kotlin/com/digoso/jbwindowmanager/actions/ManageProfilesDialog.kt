@@ -1,6 +1,6 @@
-package com.example.layoutmanager.actions
+package com.digoso.jbwindowmanager.actions
 
-import com.example.layoutmanager.store.ProfileService
+import com.digoso.jbwindowmanager.store.ProfileService
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
@@ -11,7 +11,7 @@ import com.intellij.ui.components.JBList
 import javax.swing.Action
 import javax.swing.JComponent
 
-/** Liste der Profile mit Umbenennen und Löschen. Änderungen gehen sofort in den [com.example.layoutmanager.store.ProfileStore]. */
+/** Liste der Profile mit Umbenennen und Löschen. Änderungen gehen sofort in den [com.digoso.jbwindowmanager.store.ProfileStore]. */
 class ManageProfilesDialog(private val project: Project) : DialogWrapper(project) {
     private val store = service<ProfileService>().store
     private val model = CollectionListModel(store.profiles().map { it.name })

@@ -1,4 +1,4 @@
-package com.example.layoutmanager.actions
+package com.digoso.jbwindowmanager.actions
 
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction

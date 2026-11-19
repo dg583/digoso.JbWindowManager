@@ -1,6 +1,6 @@
 # LayoutManager – Plan & Kontext
 
-Stand: 2026-11-19 · Status: Funktion umgesetzt, getestet (23 Unit-Tests, manuelle Prüfung in Rider 2026.3), Review-Befunde behoben. Offen: echte Plugin-ID/Vendor, Integration des Branches `feature/profile`.
+Stand: 2026-11-19 · Status: Funktion umgesetzt, getestet (23 Unit-Tests, manuelle Prüfung in Rider 2026.3), Review-Befunde behoben. Paket und Plugin-ID `com.digoso.jbwindowmanager`, Vendor `digoso`.
 
 Weitere Erkenntnisse und Recherche-Ergebnisse liegen nach Thema sortiert unter `docs/wissen/` (siehe `CLAUDE.md`). Design: `docs/superpowers/specs/2026-11-19-profile-design.md`, Umsetzungsplan: `docs/superpowers/plans/2026-11-19-toolwindow-profile.md`.
 
@@ -21,7 +21,7 @@ JetBrains-Plugin für **Rider**: Die Anordnung der Toolfenster als benanntes **P
 ## Struktur
 ```
 build.gradle.kts / settings.gradle.kts / gradle.properties
-src/main/kotlin/com/example/layoutmanager/
+src/main/kotlin/com/digoso/jbwindowmanager/
   model/Profile.kt            Datenmodell (Profile, ToolWindowState, Bounds)
   store/ProfileStore.kt       JSON lesen/schreiben, Verwaltung (reine Logik)
   store/ProfileService.kt     App-Service mit globalem Pfad
@@ -35,7 +35,7 @@ Build und Test: `gradlew test buildPlugin` · Sandbox: `gradlew runIde` · Prüf
 Lokale Rider statt Download: `riderPath` in `~/.gradle/gradle.properties`.
 
 ## Offen
-- **Echte Plugin-ID, Paketname und Vendor:** Platzhalter `com.example.layoutmanager` / `TBD`. `verifyPlugin` stummschaltet die Meldung `ForbiddenPluginIdPrefix`, bis das geklärt ist.
+- **Paket und Plugin-ID:** `com.digoso.jbwindowmanager`, Vendor `digoso` (gesetzt 2026-11-19; das Präfix `com.example` hatte der Verifier abgelehnt). Der Ordner der Profil-Datei heißt weiterhin `layoutmanager`.
 - Nicht im Umfang, bei Bedarf später: Export/Import, Shortcuts, Teilen im Team, Editor-Splits.
 
 ## Arbeitsweise

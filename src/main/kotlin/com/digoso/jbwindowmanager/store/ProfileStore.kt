@@ -1,8 +1,8 @@
-package com.example.layoutmanager.store
+package com.digoso.jbwindowmanager.store
 
-import com.example.layoutmanager.model.CURRENT_VERSION
-import com.example.layoutmanager.model.Profile
-import com.example.layoutmanager.model.ProfileFile
+import com.digoso.jbwindowmanager.model.CURRENT_VERSION
+import com.digoso.jbwindowmanager.model.Profile
+import com.digoso.jbwindowmanager.model.ProfileFile
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParseException
 import com.intellij.openapi.diagnostic.Logger
