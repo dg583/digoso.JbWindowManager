@@ -31,4 +31,17 @@ intellijPlatform {
     pluginConfiguration {
         ideaVersion { sinceBuild = "263" }
     }
+    pluginVerification {
+        // Platzhalter-ID com.example.*: Meldung stummschalten, bis die echte Plugin-ID feststeht
+        freeArgs = listOf("-mute", "ForbiddenPluginIdPrefix")
+        // Interne API (DesktopLayout) ist bewusst akzeptiert (nötig für floatingBounds), nur echte Brüche lassen die Prüfung scheitern
+        failureLevel = listOf(
+            org.jetbrains.intellij.platform.gradle.tasks.VerifyPluginTask.FailureLevel.COMPATIBILITY_PROBLEMS,
+            org.jetbrains.intellij.platform.gradle.tasks.VerifyPluginTask.FailureLevel.INVALID_PLUGIN,
+        )
+        ides {
+            val riderPath = providers.gradleProperty("riderPath").orNull
+            if (riderPath != null) local(riderPath) else create(IntelliJPlatformType.Rider, "2026.3") { useInstaller = false }
+        }
+    }
 }
