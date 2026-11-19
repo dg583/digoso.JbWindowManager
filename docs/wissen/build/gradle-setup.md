@@ -17,3 +17,4 @@ Stand: 2026-11-19 · Beleg: erfolgreicher Lauf `./gradlew test buildPlugin` (Smo
 - **Tests:** `testFramework(TestFrameworkType.Platform)` plus `junit:junit:4.13.2` funktioniert.
 - **Kotlin-Warnung im Log:** Beim Kompilieren erschienen Meldungen zu `kotlin_module`-Metadaten der Plattform-JARs (nur bei zu altem Kotlin). Mit 2.4.0 weg.
 - **Windows/Bash:** `python3` im Git-Bash hängt (Store-Stub), nicht für Skripte verwenden.
+- **Gson:** `com.google.gson` ist im Rider-2026.3-Classpath verfügbar, keine eigene Abhängigkeit nötig (Compile und Tests grün, 2026-11-19).
