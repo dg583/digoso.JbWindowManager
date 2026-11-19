@@ -1,0 +1,7 @@
+<idea-plugin>
+  <id>com.example.layoutmanager</id>
+  <name>Layout Manager</name>
+  <vendor>TBD</vendor>
+  <description>Speichert und lädt benannte IDE-Layouts.</description>
+  <depends>com.intellij.modules.platform</depends>
+</idea-plugin>

@@ -1,0 +1,54 @@
+# --- .NET (VisualStudio.gitignore, gekürzt) ---
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+TestResults/
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+*.log
+
+# --- Gradle / Kotlin ---
+.gradle/
+build/
+out/
+!gradle/wrapper/gradle-wrapper.jar
+.kotlin/
+*.class
+*.jar
+*.zip
+.intellijPlatform/
+
+# --- JetBrains (Rider / IntelliJ) ---
+.idea/*
+!.idea/.gitignore
+!.idea/codeStyles/
+!.idea/inspectionProfiles/
+*.iml
+*.ipr
+*.iws
+*.DotSettings.user
+_ReSharper*/
+
+# --- VS Code ---
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+
+# Ausnahmen
+!gradle/wrapper/gradle-wrapper.jar
+!docs/wissen/build/

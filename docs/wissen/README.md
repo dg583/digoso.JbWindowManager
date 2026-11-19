@@ -1,0 +1,16 @@
+# Wissensindex
+
+Erkenntnisse nach Thema. Regeln: siehe `CLAUDE.md`. Ein Eintrag je Datei: `- [Titel](pfad) – eine Zeile`.
+
+## intellij-plattform
+- [Toolfenster-API: Machbarkeit](intellij-plattform/toolwindow-api-machbarkeit.md) – was lesbar/setzbar ist, interner Weg über `DesktopLayout`
+
+## rider
+
+## profile
+- [Umfang, Ablage, Bedienung](profile/umfang-und-ablage.md) – Toolfenster-Zustand, global, Menü `Window`
+
+## build
+- [Gradle-Setup gegen Rider 2026.3](build/gradle-setup.md) – bestätigte Versionen, `riderPath`, Eigenheiten
+
+## testen
