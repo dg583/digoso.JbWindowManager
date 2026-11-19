@@ -4,4 +4,10 @@
   <vendor>TBD</vendor>
   <description>Speichert und lädt benannte IDE-Layouts.</description>
   <depends>com.intellij.modules.platform</depends>
+  <actions>
+    <group id="LayoutManager.Profiles" class="com.example.layoutmanager.actions.ProfilesActionGroup"
+           popup="true" text="Profile">
+      <add-to-group group-id="WindowMenu" anchor="last"/>
+    </group>
+  </actions>
 </idea-plugin>
