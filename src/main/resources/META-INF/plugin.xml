@@ -4,16 +4,4 @@
   <vendor>TBD</vendor>
   <description>Speichert und lädt benannte IDE-Layouts.</description>
   <depends>com.intellij.modules.platform</depends>
-  <actions>
-    <!-- SPIKE (Task 2), wird in Task 5 entfernt -->
-    <action id="LayoutSpike.Remember" class="com.example.layoutmanager.actions.SpikeRememberAction">
-      <add-to-group group-id="ToolsMenu" anchor="last"/>
-    </action>
-    <action id="LayoutSpike.RestorePublic" class="com.example.layoutmanager.actions.SpikeRestorePublicAction">
-      <add-to-group group-id="ToolsMenu" anchor="last"/>
-    </action>
-    <action id="LayoutSpike.RestoreLayout" class="com.example.layoutmanager.actions.SpikeRestoreLayoutAction">
-      <add-to-group group-id="ToolsMenu" anchor="last"/>
-    </action>
-  </actions>
 </idea-plugin>
