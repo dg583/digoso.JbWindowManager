@@ -75,4 +75,4 @@ Rules:
 ## Docs map
 - `README.md`: user-facing overview. `CHANGELOG.md`: Keep a Changelog, update on user-visible changes.
 - `docs/PLAN.md`: status and decisions. `docs/superpowers/`: design specs and implementation plans.
-- CI: `.github/workflows/build.yml` runs only `./gradlew test` on pull requests. Build, `verifyPlugin` and manual checks run locally (the runner needs a "free disk space" step because the build downloads Rider).
+- CI: `.github/workflows/build.yml` runs only IDE-free unit tests on pull requests (`./gradlew -p ci test`, project `ci/`: model, `ProfileStore`, `Geometry`, no Rider download). `ParseTest`, build, `verifyPlugin` and manual checks run locally. Keep `Geometry.kt` and `ProfileStore.kt` free of IDE types (the stub `ci/stubs` only covers `Logger`).
