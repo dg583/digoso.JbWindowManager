@@ -19,5 +19,11 @@ As of 2026-11-20 · Method: throwaway actions `Tools > Spike: Snapshot / Apply s
 - The fullscreen toggle is asynchronous: wait (spike used ~1.2 s timer) before setting bounds; tool window sizes only after the frame has settled.
 - `ToolWindow.id` and `getIdsOn` elements are platform types (nullable in Kotlin): filter nulls.
 
+## Production run in `runIde` (2026-11-20, after implementation)
+- Verified (user, manual): save and apply of version 2 profiles, version 1 profiles (frame untouched, absolute bounds for floating windows), same screen, other screen, maximized, changed order, docked sizes, side change (Terminal bottom <-> right).
+- **Sizing needed two more fixes** beyond the spike: (1) wait until every window has the saved anchor/split/type/visibility **and** the docked sizes are unchanged between two polls (a component keeps its old size for a while after `setAnchor`, measured sizes like 1496 px for a right-docked window were stale); (2) one window per pass can block the others if its size does not react to `stretchWidth/Height`: remember the last measured size per window and skip windows that did not change.
+- Remaining oddity: a split window on the right (Terminal) sometimes does not react to a large `stretchWidth` delta (seen: delta -216 and -1008) and is skipped with a log warning `Size does not react, skipped`. Cause unknown, not reproducible on demand; visually acceptable for the user.
+- **Fullscreen: still unverified.** No saved profile ever had `fullscreen: true`; neither `isInFullScreen` nor the `ToggleFullScreen` action were observed working. The code is defensive (3 s timeout, then continues).
+
 ## Consequence
 The 5 internal API usages can be removed. Requires a new design (spec) and a new data model: main frame state (fullscreen, maximized, relative bounds) and relative window bounds. Existing profile files (version 1) need a migration or a format version bump.
