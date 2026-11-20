@@ -1,5 +1,7 @@
 # Spike result: reading and applying tool windows in Rider 2026.3
 
+> **Superseded in part (2026-11-20):** the conclusion that only `setLayout` restores window positions is wrong. Position, order and size work through the public API plus the Swing window, see [Spike 2](public-api-spike.md). The text below stays as the record of spike 1.
+
 As of 2026-11-19 · Method: throwaway actions `Tools > Spike: …` in the `runIde` sandbox (Rider 2026.3, build 263); the user checked manually, evidence from `idea.log` (lines `SNAP`, `APPLY`, `AFTER-PUBLIC`, `AFTER-SETLAYOUT`). One project, 16 entries in the layout.
 
 ## Answers to the open questions
