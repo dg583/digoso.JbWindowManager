@@ -18,6 +18,9 @@ As of 2026-11-20 · Method: throwaway actions `Tools > Spike: Snapshot / Apply s
 - **Floating/windowed windows must be stored relative**, not as absolute coordinates, or they stay on the old screen after a screen change. Store as fractions of the main frame's screen (fractions outside 0..1 are fine); apply after the main frame has been placed.
 - The fullscreen toggle is asynchronous: wait (spike used ~1.2 s timer) before setting bounds; tool window sizes only after the frame has settled.
 - `ToolWindow.id` and `getIdsOn` elements are platform types (nullable in Kotlin): filter nulls.
+- **`ToolWindowManagerEx.getToolWindows()` is `@ApiStatus.Internal`** (found by `verifyPlugin` after the implementation, not visible in the spike). Use `toolWindowIdSet` + `getToolWindow(id)`. `getIdsOn(anchor)` and `ToolWindowEx.stretchWidth/Height` are not flagged.
+- `ActionUtil.invokeAction` (both the `Component` and the `DataContext` overload) is deprecated in 2026.3. `ActionManager.tryToExecute(action, null, component, place, true)` is not flagged.
+- Check the verifier report files, not only the console summary: `build/reports/pluginVerifier/<ide>/plugins/<id>/<version>/` has `internal-api-usages.txt` and `deprecated-usages.txt` only when something was found.
 
 ## Production run in `runIde` (2026-11-20, after implementation)
 - Verified (user, manual): save and apply of version 2 profiles, version 1 profiles (frame untouched, absolute bounds for floating windows), same screen, other screen, maximized, changed order, docked sizes, side change (Terminal bottom <-> right).

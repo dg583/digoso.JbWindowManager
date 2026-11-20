@@ -36,7 +36,7 @@ Basis: `docs/knowledge/intellij-platform/public-api-spike.md` (spike 2, verified
 - Reading: versions 1 and 2 are accepted. Writing always writes 2 (a version 1 file is upgraded on the next save). A newer version stays an error (no overwrite), as before.
 
 ## Capture (public API)
-- Per tool window of `ToolWindowManagerEx.getInstanceEx(project).toolWindows` (`ToolWindowManagerEx` itself is not reported as internal): `anchor`, `isSplitMode`, `type`, `isAutoHide`, `isVisible`, size from `component`, window bounds from `SwingUtilities.getWindowAncestor(component)` for `FLOATING`/`WINDOWED`.
+- Per tool window of `ToolWindowManagerEx.getInstanceEx(project).toolWindowIdSet` resolved with `getToolWindow(id)` (`ToolWindowManagerEx.getToolWindows()` is `@ApiStatus.Internal`, found by `verifyPlugin`; `getIdsOn` is fine): `anchor`, `isSplitMode`, `type`, `isAutoHide`, `isVisible`, size from `component`, window bounds from `SwingUtilities.getWindowAncestor(component)` for `FLOATING`/`WINDOWED`.
 - `order`: index in `getIdsOn(anchor)`.
 - Frame: `WindowManager.getFrame(project)`: `extendedState` (maximized), `bounds`, `graphicsConfiguration.bounds`; fullscreen via `getIdeFrame(project).isInFullScreen`.
 - Tool windows not registered in the project do not appear (nothing to skip on capture).

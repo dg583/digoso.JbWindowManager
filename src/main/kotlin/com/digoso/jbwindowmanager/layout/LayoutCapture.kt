@@ -20,7 +20,8 @@ fun captureProfile(project: Project, name: String): Profile {
     val order = HashMap<String, Int>()
     for (a in ANCHORS) manager.getIdsOn(a).forEachIndexed { i, id -> if (id != null) order[id] = i }
 
-    val states = manager.toolWindows.mapNotNull { tw ->
+    // ToolWindowManagerEx.getToolWindows() is internal: use the public id set instead.
+    val states = manager.toolWindowIdSet.mapNotNull { manager.getToolWindow(it) }.mapNotNull { tw ->
         val id = tw.id ?: return@mapNotNull null
         val type = tw.type
         val floating = type == ToolWindowType.FLOATING || type == ToolWindowType.WINDOWED

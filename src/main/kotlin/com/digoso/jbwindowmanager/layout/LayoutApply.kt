@@ -3,7 +3,6 @@ package com.digoso.jbwindowmanager.layout
 import com.digoso.jbwindowmanager.model.FrameState
 import com.digoso.jbwindowmanager.model.Profile
 import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
@@ -110,7 +109,7 @@ private fun applyFrame(project: Project, f: FrameState?, then: () -> Unit) {
     fun isFullScreen() = windowManager.getIdeFrame(project)?.isInFullScreen == true
     if (isFullScreen() != f.fullscreen) {
         val action = ActionManager.getInstance().getAction("ToggleFullScreen")
-        if (action == null) LOG.warn("Action ToggleFullScreen not found") else ActionUtil.invokeAction(action, frame.rootPane, "ProfileApply", null, null)
+        if (action == null) LOG.warn("Action ToggleFullScreen not found") else ActionManager.getInstance().tryToExecute(action, null, frame.rootPane, "ProfileApply", true)
     }
     waitUntil({ isFullScreen() == f.fullscreen }) {
         if (!f.fullscreen) {

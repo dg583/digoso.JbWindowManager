@@ -1,6 +1,6 @@
 # digoso.JbWindowManager – Plan & context
 
-As of 2026-11-19 · Status: feature implemented, tested (22 unit tests, manual verification in Rider 2026.3), review findings fixed. Package and plugin id `com.digoso.jbwindowmanager`, vendor `digoso`.
+As of 2026-11-20 · Status: version 0.2.0 implemented (33 unit tests, manual verification in Rider 2026.3, fullscreen untested), first version 0.1.0 already uploaded to the Marketplace. Package and plugin id `com.digoso.jbwindowmanager`, vendor `digoso`.
 
 Further findings and research results, sorted by topic, live under `docs/knowledge/` (see `.claude/CLAUDE.md`). Design: `docs/superpowers/specs/2026-11-19-profile-design.md`, implementation plan: `docs/superpowers/plans/2026-11-19-toolwindow-profile.md`.
 
@@ -16,7 +16,7 @@ JetBrains plugin for **Rider**: save the arrangement of the tool windows as a na
 - **Storage:** global, JSON, `<IDE-Config>/digoso.JbWindowManager/profiles.json`.
 - **Usage:** submenu `Window > Profiles` (switch profiles, "Save as…", "Manage…" with rename/delete).
 - Missing tool windows are skipped when applying.
-- **Apply via `ToolWindowManagerEx.setLayout`** (internal API `DesktopLayout`): only this restores the window position (spike: `docs/knowledge/intellij-platform/spike-result.md`). Risk: the internal API may change between versions. `verifyPlugin` reports it (5 internal API usages) and is configured to treat only real breakage as errors.
+- **Public API only (since 0.2.0).** Spike 1 used the internal `DesktopLayout`; the Marketplace check flagged 5 usages. Spike 2 showed position, order and sizes work via the public API plus the Swing window (`docs/knowledge/intellij-platform/public-api-spike.md`, design `docs/superpowers/specs/2026-11-20-public-api-design.md`). Profiles also store the main window and relative positions (file format version 2). Fullscreen is untested.
 - **License:** MIT.
 
 ## Structure

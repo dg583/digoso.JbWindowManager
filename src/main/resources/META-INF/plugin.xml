@@ -17,7 +17,9 @@
     <p>For each tool window: the side (left, right, bottom, top), the split position (for example left/top versus left/bottom),
     open or closed, the view mode (docked, unpinned, undocked, floating, window), size and order, and the window position
     of floating and windowed tool windows.</p>
-    <p>Not stored: editor splits, open files and the main window size.</p>
+    <p>A profile also stores the state of the main window (fullscreen, maximized, or its position and size). Positions are
+    stored relative to the screen, so a profile still fits when you switch to another screen or resolution.</p>
+    <p>Not stored: editor splits and open files.</p>
 
     <h3>Good to know</h3>
     <ul>
@@ -31,7 +33,9 @@
   ]]></description>
   <change-notes><![CDATA[
     <ul>
-      <li>Initial release: save, apply, rename and delete tool window profiles via <i>Window | Profiles</i>.</li>
+      <li>0.2.0: profiles also store the main window (fullscreen, maximized, position and size); positions are relative
+      to the screen; the plugin no longer uses any internal IntelliJ Platform API. Profiles saved with 0.1.0 still work.</li>
+      <li>0.1.0: initial release: save, apply, rename and delete tool window profiles via <i>Window | Profiles</i>.</li>
     </ul>
   ]]></change-notes>
   <depends>com.intellij.modules.platform</depends>
@@ -40,12 +44,5 @@
            popup="true" text="Profiles">
       <add-to-group group-id="WindowMenu" anchor="last"/>
     </group>
-    <!-- SPIKE (throwaway) -->
-    <action id="digoso.Spike.Snapshot" class="com.digoso.jbwindowmanager.actions.SpikeSnapshotAction">
-      <add-to-group group-id="ToolsMenu" anchor="last"/>
-    </action>
-    <action id="digoso.Spike.Apply" class="com.digoso.jbwindowmanager.actions.SpikeApplyAction">
-      <add-to-group group-id="ToolsMenu" anchor="last"/>
-    </action>
   </actions>
 </idea-plugin>
