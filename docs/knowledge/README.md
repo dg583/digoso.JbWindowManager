@@ -1,6 +1,6 @@
 # Knowledge index
 
-Findings by topic. Rules: see `CLAUDE.md`. One entry per file: `- [Title](path) – one line`.
+Findings by topic. Rules: see `.claude/CLAUDE.md`. One entry per file: `- [Title](path) – one line`.
 
 ## intellij-platform
 - [Spike result](intellij-platform/spike-result.md) – verified in Rider 2026.3: the public API is not enough for position, `setLayout` is

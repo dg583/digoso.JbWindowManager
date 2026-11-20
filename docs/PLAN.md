@@ -2,7 +2,7 @@
 
 As of 2026-11-19 · Status: feature implemented, tested (22 unit tests, manual verification in Rider 2026.3), review findings fixed. Package and plugin id `com.digoso.jbwindowmanager`, vendor `digoso`.
 
-Further findings and research results, sorted by topic, live under `docs/knowledge/` (see `CLAUDE.md`). Design: `docs/superpowers/specs/2026-11-19-profile-design.md`, implementation plan: `docs/superpowers/plans/2026-11-19-toolwindow-profile.md`.
+Further findings and research results, sorted by topic, live under `docs/knowledge/` (see `.claude/CLAUDE.md`). Design: `docs/superpowers/specs/2026-11-19-profile-design.md`, implementation plan: `docs/superpowers/plans/2026-11-19-toolwindow-profile.md`.
 
 ## Goal
 JetBrains plugin for **Rider**: save the arrangement of the tool windows as a named **profile**, manage several profiles (create, switch, rename, delete). Rider's `Window > Layouts` is not enough because profiles cannot be managed there.
