@@ -16,3 +16,6 @@ Ein Profil enthält je Toolfenster Seite, Split-Position, offen/zu, ViewMode, Gr
 - `gradlew verifyPlugin`: Kompatibilitätsprüfung gegen Rider 2026.3
 - Lokale Rider statt Download: `riderPath=<Pfad zur Rider-Installation>` in `~/.gradle/gradle.properties`
 - Mehr: `PLAN.md`, `docs/wissen/`
+
+## Lizenz
+[MIT](LICENSE), Copyright (c) 2026 Dirk Goldecker
