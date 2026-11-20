@@ -30,3 +30,9 @@ As of 2026-11-20 · Method: throwaway actions `Tools > Spike: Snapshot / Apply s
 
 ## Consequence
 The 5 internal API usages can be removed. Requires a new design (spec) and a new data model: main frame state (fullscreen, maximized, relative bounds) and relative window bounds. Existing profile files (version 1) need a migration or a format version bump.
+
+## Review fixes (2026-11-20, whole-branch review)
+- **Overlapping applies:** a second apply (two quick clicks) interleaved with the first and could leave the first profile's state. Each apply now has a generation per project; every asynchronous step stops when the project is closed or a newer apply started (`Run` in `LayoutApply.kt`). Platform-bound, verified by compile and manual run, no unit test.
+- **Validation:** `ProfileJson.fromJson` rejects `rel` with missing/non-finite/non-positive values and a non-finite `weight` (Gson turns missing numbers into 0.0 and accepts NaN, which would apply a 0x0 rect or throw in `roundToInt`).
+- **Size passes:** a window is skipped as "does not react" only after two unchanged measurements (hypothesis, unverified: the first re-measure after `stretchWidth/Height` can still be stale, which would explain the Terminal oddity above).
+- Known, deferred (see ledger): settle wait times out (3 s) for windows that cannot reach the saved visibility; un-maximize followed by `bounds` may race on Windows; a floating window whose component is not yet reparented would resolve to the main frame as window ancestor; v1 `weight` may be relative to the tool window pane (a few px off).

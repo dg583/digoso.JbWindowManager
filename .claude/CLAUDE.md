@@ -11,7 +11,7 @@
 
 ## Commands
 ```
-./gradlew test                                  # unit tests (33)
+./gradlew test                                  # unit tests (38)
 ./gradlew buildPlugin                           # ZIP in build/distributions
 ./gradlew verifyPlugin                          # Plugin Verifier against Rider 2026.3 (~1.5 min, ~370 MB cache)
 ./gradlew runIde                                # sandbox Rider with the plugin

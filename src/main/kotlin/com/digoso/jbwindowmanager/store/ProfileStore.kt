@@ -3,6 +3,7 @@ package com.digoso.jbwindowmanager.store
 import com.digoso.jbwindowmanager.model.CURRENT_VERSION
 import com.digoso.jbwindowmanager.model.Profile
 import com.digoso.jbwindowmanager.model.ProfileFile
+import com.digoso.jbwindowmanager.model.Rel
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParseException
 import com.intellij.openapi.diagnostic.Logger
@@ -117,6 +118,11 @@ object ProfileJson {
                     p.toolWindows.all { s -> s != null && s.id != null && s.anchor != null && s.type != null }
             },
         ) { "Profile incomplete (name, toolWindows, id, anchor or type missing)" }
+        // Gson turns missing numbers into 0.0 and accepts NaN: a 0x0 or non-finite rect would be applied to a real window
+        fun relOk(r: Rel?) = r == null || (listOf(r.x, r.y, r.w, r.h).all { it.isFinite() } && r.w > 0 && r.h > 0)
+        require(file.profiles.all { p -> relOk(p.frame?.rel) && p.toolWindows.all { s -> relOk(s.rel) && s.weight.isFinite() } }) {
+            "Invalid relative position, size or weight (missing, not finite or not positive)"
+        }
         require(file.version <= CURRENT_VERSION) { "File version ${file.version} is newer than supported ($CURRENT_VERSION)" }
         return file
     }

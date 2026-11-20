@@ -89,6 +89,38 @@ class ProfileStoreTest {
         assertEquals(CURRENT_VERSION, ProfileJson.fromJson(Files.readString(path)).version)
     }
 
+    private fun windowJson(extra: String) =
+        """{"version":2,"profiles":[{"name":"P","toolWindows":[{"id":"X","anchor":"left","split":false,"type":"WINDOWED","autoHide":false,"visible":true,"order":0,"weight":0.0,$extra}]}]}"""
+
+    @Test
+    fun relWithMissingValuesIsRejected() {
+        // Gson would turn the missing w/h into 0.0 and the window would be set to a 0x0 rect
+        assertThrows(IllegalArgumentException::class.java) { ProfileJson.fromJson(windowJson(""""rel":{"x":0.1,"y":0.2}""")) }
+    }
+
+    @Test
+    fun relWithNonPositiveSizeIsRejected() {
+        assertThrows(IllegalArgumentException::class.java) { ProfileJson.fromJson(windowJson(""""rel":{"x":0.1,"y":0.2,"w":0.0,"h":0.5}""")) }
+    }
+
+    @Test
+    fun frameRelWithNonPositiveSizeIsRejected() {
+        val json = """{"version":2,"profiles":[{"name":"P","toolWindows":[],"frame":{"fullscreen":false,"maximized":false,"rel":{"x":0.0,"y":0.0,"w":0.5,"h":0.0}}}]}"""
+        assertThrows(IllegalArgumentException::class.java) { ProfileJson.fromJson(json) }
+    }
+
+    @Test
+    fun nonFiniteRelOrWeightIsRejected() {
+        assertThrows(IllegalArgumentException::class.java) { ProfileJson.fromJson(windowJson(""""rel":{"x":NaN,"y":0.2,"w":0.5,"h":0.5}""")) }
+        assertThrows(IllegalArgumentException::class.java) { ProfileJson.fromJson(windowJson(""""weight":NaN""").replace(""""weight":0.0,""", "")) }
+    }
+
+    @Test
+    fun validRelIsAccepted() {
+        val rel = ProfileJson.fromJson(windowJson(""""rel":{"x":-0.1,"y":0.2,"w":0.5,"h":0.5}""")).profiles.single().toolWindows.single().rel
+        assertEquals(Rel(-0.1, 0.2, 0.5, 0.5), rel)
+    }
+
     @Test
     fun frameWithoutFlagsIsAccepted() {
         val json = """{"version":2,"profiles":[{"name":"P","toolWindows":[],"frame":{"rel":null}}]}"""

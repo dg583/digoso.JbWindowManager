@@ -1,6 +1,6 @@
 # digoso.JbWindowManager – Plan & context
 
-As of 2026-11-20 · Status: version 0.2.0 implemented (33 unit tests, manual verification in Rider 2026.3, fullscreen untested), first version 0.1.0 already uploaded to the Marketplace. Package and plugin id `com.digoso.jbwindowmanager`, vendor `digoso`.
+As of 2026-11-20 · Status: version 0.2.0 implemented (38 unit tests, manual verification in Rider 2026.3, fullscreen untested), first version 0.1.0 already uploaded to the Marketplace. Package and plugin id `com.digoso.jbwindowmanager`, vendor `digoso`.
 
 Further findings and research results, sorted by topic, live under `docs/knowledge/` (see `.claude/CLAUDE.md`). Design: `docs/superpowers/specs/2026-11-19-profile-design.md`, implementation plan: `docs/superpowers/plans/2026-11-19-toolwindow-profile.md`.
 

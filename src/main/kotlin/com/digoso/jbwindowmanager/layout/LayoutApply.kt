@@ -27,14 +27,24 @@ private const val MAX_SIZE_PASSES = 5
  * Best effort: a failure on one tool window is logged and does not abort the profile.
  */
 fun applyProfile(project: Project, profile: Profile) {
-    applyFrame(project, profile.frame) {
+    val run = Run(project)
+    applyFrame(run, profile.frame) {
+        if (!run.current) return@applyFrame
         applyToolWindows(project, profile)
         // Sizes only make sense once every window sits on its side with its type; the platform applies these asynchronously.
-        waitUntil(toolWindowsStable(project, profile)) {
+        waitUntil(run, toolWindowsStable(project, profile)) {
             applyWindowBounds(project, profile)
-            ApplicationManager.getApplication().invokeLater { applySizes(project, profile, 1, SizeState()) }
+            ApplicationManager.getApplication().invokeLater { applySizes(run, profile, 1, SizeState()) }
         }
     }
+}
+
+private val generations = java.util.WeakHashMap<Project, Int>()
+
+/** One apply sequence. It stops as soon as the project is closed or a newer apply for the same project has started. */
+private class Run(val project: Project) {
+    private val generation: Int = ((generations[project] ?: 0) + 1).also { generations[project] = it }
+    val current: Boolean get() = !project.isDisposed && generations[project] == generation
 }
 
 /** Settled and, in addition, the docked window sizes are unchanged between two consecutive polls (the layout has caught up). */
@@ -72,13 +82,18 @@ private fun toolWindowsSettled(project: Project, profile: Profile): Boolean {
 /** Per apply run: last measured size per window and windows whose size does not react to stretching. */
 private class SizeState {
     val last = HashMap<String, Int>()
+    val unchanged = HashMap<String, Int>()
     val stuck = HashSet<String>()
 }
 
-/** Polls on the EDT until [condition] holds or the timeout passes, then runs [then]. No fixed sleeps. */
-private fun waitUntil(condition: () -> Boolean, then: () -> Unit) {
+/** Polls on the EDT until [condition] holds or the timeout passes, then runs [then]. Stops silently when [run] is no longer current. */
+private fun waitUntil(run: Run, condition: () -> Boolean, then: () -> Unit) {
     val start = System.currentTimeMillis()
     Timer(POLL_MS) { e ->
+        if (!run.current) {
+            (e.source as Timer).stop()
+            return@Timer
+        }
         val ok = condition()
         if (ok || System.currentTimeMillis() - start > SETTLE_TIMEOUT_MS) {
             (e.source as Timer).stop()
@@ -99,7 +114,8 @@ private fun stable(frame: Frame): () -> Boolean {
     }
 }
 
-private fun applyFrame(project: Project, f: FrameState?, then: () -> Unit) {
+private fun applyFrame(run: Run, f: FrameState?, then: () -> Unit) {
+    val project = run.project
     val windowManager = WindowManager.getInstance()
     val frame = windowManager.getFrame(project)
     if (f == null || frame == null) {
@@ -111,7 +127,7 @@ private fun applyFrame(project: Project, f: FrameState?, then: () -> Unit) {
         val action = ActionManager.getInstance().getAction("ToggleFullScreen")
         if (action == null) LOG.warn("Action ToggleFullScreen not found") else ActionManager.getInstance().tryToExecute(action, null, frame.rootPane, "ProfileApply", true)
     }
-    waitUntil({ isFullScreen() == f.fullscreen }) {
+    waitUntil(run, { isFullScreen() == f.fullscreen }) {
         if (!f.fullscreen) {
             try {
                 frame.extendedState = if (f.maximized) Frame.MAXIMIZED_BOTH else Frame.NORMAL
@@ -121,7 +137,7 @@ private fun applyFrame(project: Project, f: FrameState?, then: () -> Unit) {
                 LOG.warn("Failed to apply the main frame state", t)
             }
         }
-        waitUntil(stable(frame), then)
+        waitUntil(run, stable(frame), then)
     }
 }
 
@@ -173,7 +189,9 @@ private fun applyWindowBounds(project: Project, profile: Profile) {
  * Converging passes: one window per pass (windows in one column share their width), re-measure after the layout has
  * settled, until every docked window is within tolerance or [MAX_SIZE_PASSES] is reached.
  */
-private fun applySizes(project: Project, profile: Profile, pass: Int, state: SizeState) {
+private fun applySizes(run: Run, profile: Profile, pass: Int, state: SizeState) {
+    if (!run.current) return
+    val project = run.project
     val manager = ToolWindowManager.getInstance(project)
     val frame = WindowManager.getInstance().getFrame(project)
     var changed = false
@@ -188,11 +206,19 @@ private fun applySizes(project: Project, profile: Profile, pass: Int, state: Siz
             val actual = if (horizontal) tw.component.width else tw.component.height
             val delta = nextStretch(target, actual) ?: continue
             if (state.last[s.id] == actual) {
-                // The last stretch changed nothing: do not let this window block the others.
-                LOG.warn("Size does not react, skipped: ${s.id} (${s.anchor}, split=${s.split}) target=$target actual=$actual")
-                state.stuck.add(s.id)
-                continue
+                // Unchanged since the last stretch. The layout may just not have caught up yet: measure once more before
+                // giving up, then do not let this window block the others.
+                val n = (state.unchanged[s.id] ?: 0) + 1
+                state.unchanged[s.id] = n
+                if (n >= 2) {
+                    LOG.warn("Size does not react, skipped: ${s.id} (${s.anchor}, split=${s.split}) target=$target actual=$actual")
+                    state.stuck.add(s.id)
+                    continue
+                }
+                changed = true
+                break
             }
+            state.unchanged.remove(s.id)
             state.last[s.id] = actual
             LOG.info("Size pass $pass: ${s.id} (${s.anchor}, split=${s.split}) target=$target actual=$actual delta=$delta frame=${frame.width}x${frame.height}")
             try {
@@ -205,7 +231,7 @@ private fun applySizes(project: Project, profile: Profile, pass: Int, state: Siz
         }
     }
     if (changed && pass < MAX_SIZE_PASSES * 4) {
-        ApplicationManager.getApplication().invokeLater { applySizes(project, profile, pass + 1, state) }
+        ApplicationManager.getApplication().invokeLater { applySizes(run, profile, pass + 1, state) }
     } else if (changed) {
         LOG.warn("Docked sizes did not converge within ${MAX_SIZE_PASSES * 4} passes")
     }
