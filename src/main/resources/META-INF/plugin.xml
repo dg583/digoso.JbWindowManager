@@ -1,8 +1,39 @@
 <idea-plugin>
   <id>com.digoso.jbwindowmanager</id>
   <name>digoso.JbWindowManager</name>
-  <vendor>digoso</vendor>
-  <description>Saves the arrangement of the tool windows (side, split position, visibility, view mode and floating window position) as named profiles and switches between them from the Window menu. Profiles can be renamed and deleted.</description>
+  <vendor email="digoso@live.de" url="https://github.com/dg583/digoso.JbWindowManager">digoso</vendor>
+  <description><![CDATA[
+    <p>Save the arrangement of your tool windows as named <b>profiles</b> and switch between them with one click.</p>
+    <p>The built-in <i>Window | Layouts</i> cannot manage profiles. This plugin adds a <i>Window | Profiles</i> submenu to do exactly that.</p>
+
+    <h3>Features</h3>
+    <ul>
+      <li><b>Save as&hellip;</b> stores the current tool window arrangement under a name.</li>
+      <li><b>Click a profile</b> in the menu to apply it.</li>
+      <li><b>Manage&hellip;</b> renames or deletes profiles.</li>
+    </ul>
+
+    <h3>What a profile stores</h3>
+    <p>For each tool window: the side (left, right, bottom, top), the split position (for example left/top versus left/bottom),
+    open or closed, the view mode (docked, unpinned, undocked, floating, window), size and order, and the window position
+    of floating and windowed tool windows.</p>
+    <p>Not stored: editor splits, open files and the main window size.</p>
+
+    <h3>Good to know</h3>
+    <ul>
+      <li>Profiles are global and shared by all projects. They are kept in a JSON file in the IDE configuration folder.</li>
+      <li>Tool windows that do not exist in the current project are skipped when a profile is applied.</li>
+      <li>Built and verified for Rider 2026.3. Only the IntelliJ Platform is used, so other IntelliJ-based IDEs of the same version
+      should work, but they have not been tested.</li>
+    </ul>
+
+    <p>Source code and issue tracker: <a href="https://github.com/dg583/digoso.JbWindowManager">GitHub</a>. Licensed under the MIT License.</p>
+  ]]></description>
+  <change-notes><![CDATA[
+    <ul>
+      <li>Initial release: save, apply, rename and delete tool window profiles via <i>Window | Profiles</i>.</li>
+    </ul>
+  ]]></change-notes>
   <depends>com.intellij.modules.platform</depends>
   <actions>
     <group id="digoso.JbWindowManager.Profiles" class="com.digoso.jbwindowmanager.actions.ProfilesActionGroup"
