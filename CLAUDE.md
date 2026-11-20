@@ -1,34 +1,34 @@
 # CLAUDE.md
 
-JetBrains-Plugin für Rider (Kotlin + Gradle), das IDE-Layouts als **Profile** verwaltet. Kontext und Entscheidungen: `PLAN.md`.
+JetBrains plugin for Rider (Kotlin + Gradle) that manages IDE layouts as **profiles**. Context and decisions: `docs/PLAN.md`.
 
-## Arbeitsweise
-- Sprache der Zusammenarbeit: Deutsch.
-- Kleinste funktionierende Lösung, keine spekulativen Abstraktionen.
-- Kein Code, bevor das Design in `docs/superpowers/specs/` freigegeben ist.
+## Working style
+- Language: project artifacts (code, comments, docs, commit messages) are in English. Conversation with the user is in German.
+- Smallest working solution, no speculative abstractions.
+- No code before the design in `docs/superpowers/specs/` is approved.
 
-## Wissensablage (Pflicht)
-Neue Erkenntnisse **sofort** im Ordner `docs/wissen/` festhalten, **nach Thema** gegliedert. Nicht in Chat-Antworten, `PLAN.md` oder Commit-Messages versanden lassen.
+## Knowledge base (mandatory)
+Record new findings in `docs/knowledge/` **immediately**, **organized by topic**. Do not let them get lost in chat answers, `docs/PLAN.md` or commit messages.
 
-Struktur:
+Structure:
 ```
-docs/wissen/
-  <thema>/            # ein Ordner je Thema, kebab-case
-    <unterthema>.md   # eine Datei je abgegrenzter Erkenntnis
-  README.md           # Index: ein Eintrag je Datei (Link + eine Zeile)
+docs/knowledge/
+  <topic>/            # one folder per topic, kebab-case
+    <subtopic>.md     # one file per self-contained finding
+  README.md           # index: one entry per file (link + one line)
 ```
 
-Themenordner (bei Bedarf neue anlegen, vorher prüfen, ob ein bestehender passt):
-- `intellij-plattform/` – APIs und Verhalten der IntelliJ Platform (ToolWindowManager, WindowManager, Layout-Persistenz, Services, Actions)
-- `rider/` – Rider-Besonderheiten (Frontend/Backend-Split, `Window > Layouts`)
-- `profile/` – Design und Entscheidungen zur Profilverwaltung (Datenmodell, Ablage, Format, Bedienung)
-- `build/` – Gradle, IntelliJ Platform Gradle Plugin, Versionen, `runIde`, Signierung/Veröffentlichung
-- `testen/` – Teststrategie, Sandbox-Erkenntnisse
+Topic folders (create new ones if needed, but check first whether an existing one fits):
+- `intellij-platform/` – APIs and behavior of the IntelliJ Platform (ToolWindowManager, WindowManager, layout persistence, services, actions)
+- `rider/` – Rider specifics (frontend/backend split, `Window > Layouts`)
+- `profile/` – design and decisions for profile management (data model, storage, format, usage)
+- `build/` – Gradle, IntelliJ Platform Gradle Plugin, versions, `runIde`, signing/publishing
+- `testing/` – test strategy, sandbox findings
 
-Regeln:
-1. **Vor dem Schreiben** `docs/wissen/README.md` und den passenden Themenordner prüfen. Bestehende Datei aktualisieren statt Duplikat anlegen.
-2. Pro Datei: Überschrift, Erkenntnis in wenigen Sätzen, **Quelle/Beleg** (Doku-Link, Klasse, Test), Datum (`YYYY-MM-DD`). Unsicheres als „ungeprüft“ markieren.
-3. Neue oder geänderte Datei → Eintrag in `docs/wissen/README.md` ergänzen.
-4. Falsch gewordene Erkenntnisse korrigieren oder löschen, nicht stehen lassen.
-5. `PLAN.md` bleibt der knappe Überblick (Ziel, Entscheidungen, nächste Schritte) und verweist auf `docs/wissen/`. Details gehören dorthin.
-6. Nur festhalten, was nicht schon aus Code oder Git-Historie ersichtlich ist.
+Rules:
+1. **Before writing**, check `docs/knowledge/README.md` and the matching topic folder. Update an existing file instead of creating a duplicate.
+2. Per file: heading, finding in a few sentences, **source/evidence** (doc link, class, test), date (`YYYY-MM-DD`). Mark anything uncertain as "unverified".
+3. New or changed file → add an entry to `docs/knowledge/README.md`.
+4. Correct or delete findings that have become wrong, do not leave them standing.
+5. `docs/PLAN.md` stays the short overview (goal, decisions, next steps) and points to `docs/knowledge/`. Details belong there.
+6. Record only what is not already evident from the code or the git history.

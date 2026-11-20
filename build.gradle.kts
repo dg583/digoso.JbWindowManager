@@ -16,10 +16,10 @@ repositories {
 
 dependencies {
     intellijPlatform {
-        // riderPath (in ~/.gradle/gradle.properties) = lokale Rider-Installation, sonst Download
+        // riderPath (in ~/.gradle/gradle.properties) = local Rider installation, otherwise download
         val riderPath = providers.gradleProperty("riderPath").orNull
         if (riderPath != null) local(riderPath) else create(IntelliJPlatformType.Rider, "2026.3") { useInstaller = false }
-        // ponytail: nur Rider als Ziel; weitere IDEs später über platform-unabhängige Module
+        // ponytail: Rider only as target; more IDEs later via platform-independent modules
         testFramework(TestFrameworkType.Platform)
     }
     testImplementation("junit:junit:4.13.2")
@@ -32,7 +32,7 @@ intellijPlatform {
         ideaVersion { sinceBuild = "263" }
     }
     pluginVerification {
-        // Interne API (DesktopLayout) ist bewusst akzeptiert (nötig für floatingBounds), nur echte Brüche lassen die Prüfung scheitern
+        // Internal API (DesktopLayout) is accepted on purpose (needed for floatingBounds); only real breakages fail the verification
         failureLevel = listOf(
             org.jetbrains.intellij.platform.gradle.tasks.VerifyPluginTask.FailureLevel.COMPATIBILITY_PROBLEMS,
             org.jetbrains.intellij.platform.gradle.tasks.VerifyPluginTask.FailureLevel.INVALID_PLUGIN,

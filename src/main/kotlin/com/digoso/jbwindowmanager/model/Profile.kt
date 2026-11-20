@@ -4,7 +4,7 @@ const val CURRENT_VERSION = 1
 
 data class Bounds(val x: Int, val y: Int, val width: Int, val height: Int)
 
-/** Zustand eines Toolfensters. `anchor` und `type` sind Strings, damit unbekannte Werte nicht beim Lesen scheitern. */
+/** State of one tool window. `anchor` and `type` are strings so unknown values do not fail while reading. */
 data class ToolWindowState(
     val id: String,
     val anchor: String, // left | right | bottom | top

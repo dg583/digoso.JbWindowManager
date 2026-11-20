@@ -1,1 +1,1 @@
-rootProject.name = "LayoutManager"
+rootProject.name = "digoso.JbWindowManager"

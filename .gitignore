@@ -1,54 +1,25 @@
-# --- .NET (VisualStudio.gitignore, gekürzt) ---
-[Bb]in/
-[Oo]bj/
-[Ll]og/
-[Ll]ogs/
-*.user
-*.suo
-*.userosscache
-*.sln.docstates
-.vs/
-TestResults/
-*.nupkg
-*.snupkg
-.nuget/
-packages/
-*.log
-
-# --- Gradle / Kotlin ---
+# Gradle / Kotlin
 .gradle/
 build/
 out/
-!gradle/wrapper/gradle-wrapper.jar
 .kotlin/
-*.class
-*.jar
-*.zip
 .intellijPlatform/
+*.class
+*.log
 
-# --- JetBrains (Rider / IntelliJ) ---
-.idea/*
-!.idea/.gitignore
-!.idea/codeStyles/
-!.idea/inspectionProfiles/
+# IDEs
+.idea/
 *.iml
-*.ipr
-*.iws
-*.DotSettings.user
-_ReSharper*/
-
-# --- VS Code ---
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
+.vscode/
 *.code-workspace
 
-# --- OS ---
+# Claude Code / superpowers (lokal)
+.claude/settings.local.json
+.superpowers/
+
+# OS
 .DS_Store
 Thumbs.db
 
-# Ausnahmen
+# Wrapper-JAR gehört ins Repo
 !gradle/wrapper/gradle-wrapper.jar
-!docs/wissen/build/

@@ -157,7 +157,7 @@ class ProfileStoreTest {
 
     @Test
     fun writeFailureBecomesIllegalStateAndKeepsOldState() {
-        val blocker = tmp.newFile("sub") // reguläre Datei dort, wo der Ordner hin müsste
+        val blocker = tmp.newFile("sub") // regular file where the directory would have to go
         val store = ProfileStore(blocker.toPath().resolve("profiles.json"))
         assertThrows(IllegalStateException::class.java) { store.save(profile("A")) }
         assertTrue(store.profiles().isEmpty())

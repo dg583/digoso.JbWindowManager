@@ -10,14 +10,14 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.Separator
 import com.intellij.openapi.components.service
 
-/** Untermenü `Window > Profile`: Liste der Profile (Klick wendet an), danach Speichern und Verwalten. */
+/** Submenu `Window > Profiles`: list of profiles (click applies), then Save and Manage. */
 class ProfilesActionGroup : ActionGroup() {
     override fun getActionUpdateThread() = ActionUpdateThread.BGT
 
     override fun getChildren(e: AnActionEvent?): Array<AnAction> {
         val store = service<ProfileService>().store
         val items = mutableListOf<AnAction>()
-        store.loadError?.let { items += DisabledAction("Profile nicht lesbar: $it (nach Korrektur IDE neu starten)") }
+        store.loadError?.let { items += DisabledAction("Profiles unreadable: $it (restart the IDE after fixing)") }
         store.profiles().mapTo(items) { ApplyProfileAction(it) }
         items += Separator.getInstance()
         items += SaveProfileAction()
@@ -28,7 +28,7 @@ class ProfilesActionGroup : ActionGroup() {
 
 private class ApplyProfileAction(private val profile: Profile) : AnAction() {
     init {
-        templatePresentation.setText(profile.name, false) // false: kein Mnemonic aus '_' im Namen
+        templatePresentation.setText(profile.name, false) // false: no mnemonic from "_" in the name
     }
 
     override fun getActionUpdateThread() = ActionUpdateThread.BGT

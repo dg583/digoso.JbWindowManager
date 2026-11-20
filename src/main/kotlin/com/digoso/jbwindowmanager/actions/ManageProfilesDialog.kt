@@ -11,15 +11,15 @@ import com.intellij.ui.components.JBList
 import javax.swing.Action
 import javax.swing.JComponent
 
-/** Liste der Profile mit Umbenennen und Löschen. Änderungen gehen sofort in den [com.digoso.jbwindowmanager.store.ProfileStore]. */
+/** List of profiles with rename and delete. Changes go straight to the [com.digoso.jbwindowmanager.store.ProfileStore]. */
 class ManageProfilesDialog(private val project: Project) : DialogWrapper(project) {
     private val store = service<ProfileService>().store
     private val model = CollectionListModel(store.profiles().map { it.name })
     private val list = JBList(model)
 
     init {
-        title = "Profile verwalten"
-        setOKButtonText("Schließen")
+        title = "Manage Profiles"
+        setOKButtonText("Close")
         init()
     }
 
@@ -30,31 +30,31 @@ class ManageProfilesDialog(private val project: Project) : DialogWrapper(project
             .disableAddAction()
             .disableUpDownActions()
             .setEditAction { rename() }
-            .setEditActionName("Umbenennen")
+            .setEditActionName("Rename")
             .setRemoveAction { delete() }
-            .setRemoveActionName("Löschen")
+            .setRemoveActionName("Delete")
             .createPanel()
 
     private fun rename() {
         val old = list.selectedValue ?: return
-        val new = Messages.showInputDialog(project, "Neuer Name:", "Profil umbenennen", null, old, null)?.trim() ?: return
+        val new = Messages.showInputDialog(project, "New name:", "Rename Profile", null, old, null)?.trim() ?: return
         run { store.rename(old, new) }
     }
 
     private fun delete() {
         val name = list.selectedValue ?: return
-        if (Messages.showYesNoDialog(project, "Profil „$name“ löschen?", "Profil löschen", null) != Messages.YES) return
+        if (Messages.showYesNoDialog(project, "Delete profile \"$name\"?", "Delete Profile", null) != Messages.YES) return
         run { store.delete(name) }
     }
 
-    /** Führt eine Store-Änderung aus, zeigt Fehler als Dialog und aktualisiert die Liste. */
+    /** Runs a store change, shows errors as a dialog and refreshes the list. */
     private fun run(change: () -> Unit) {
         try {
             change()
         } catch (ex: IllegalArgumentException) {
-            Messages.showErrorDialog(project, ex.message ?: "Ungültige Eingabe", "Profile verwalten")
+            Messages.showErrorDialog(project, ex.message ?: "Invalid input", "Manage Profiles")
         } catch (ex: IllegalStateException) {
-            Messages.showErrorDialog(project, ex.message ?: "Profile nicht lesbar", "Profile verwalten")
+            Messages.showErrorDialog(project, ex.message ?: "Profiles unreadable", "Manage Profiles")
         }
         model.replaceAll(store.profiles().map { it.name })
     }

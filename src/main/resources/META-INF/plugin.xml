@@ -1,12 +1,12 @@
 <idea-plugin>
   <id>com.digoso.jbwindowmanager</id>
-  <name>Layout Manager</name>
+  <name>digoso.JbWindowManager</name>
   <vendor>digoso</vendor>
   <description>Saves the arrangement of the tool windows (side, split position, visibility, view mode and floating window position) as named profiles and switches between them from the Window menu. Profiles can be renamed and deleted.</description>
   <depends>com.intellij.modules.platform</depends>
   <actions>
-    <group id="LayoutManager.Profiles" class="com.digoso.jbwindowmanager.actions.ProfilesActionGroup"
-           popup="true" text="Profile">
+    <group id="digoso.JbWindowManager.Profiles" class="com.digoso.jbwindowmanager.actions.ProfilesActionGroup"
+           popup="true" text="Profiles">
       <add-to-group group-id="WindowMenu" anchor="last"/>
     </group>
   </actions>

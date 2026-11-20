@@ -6,7 +6,7 @@ import com.digoso.jbwindowmanager.model.ToolWindowState
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ex.ToolWindowManagerEx
 
-/** Liest den Ist-Zustand aller Toolfenster des Projekts (nur im EDT). */
+/** Reads the current state of all tool windows of the project (EDT only). */
 fun captureProfile(project: Project, name: String): Profile {
     val infos = ToolWindowManagerEx.getInstanceEx(project).getLayout().getInfos().values
     val states = infos.mapNotNull { i ->

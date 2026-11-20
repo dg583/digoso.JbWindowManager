@@ -8,7 +8,7 @@ import com.intellij.openapi.wm.ToolWindowType
 import com.intellij.openapi.wm.ex.ToolWindowManagerEx
 import java.awt.Rectangle
 
-private val LOG = Logger.getInstance("LayoutManager.Apply")
+private val LOG = Logger.getInstance("digoso.JbWindowManager.Apply")
 
 internal fun parseAnchor(s: String): ToolWindowAnchor? =
     listOf(ToolWindowAnchor.LEFT, ToolWindowAnchor.RIGHT, ToolWindowAnchor.BOTTOM, ToolWindowAnchor.TOP).firstOrNull { anchorName(it) == s }
@@ -18,9 +18,9 @@ internal fun anchorName(a: ToolWindowAnchor): String = a.toString()
 internal fun parseType(s: String): ToolWindowType? = ToolWindowType.entries.firstOrNull { it.name == s }
 
 /**
- * Wendet [profile] an (nur im EDT). Weg laut Spike: Kopie des aktuellen Layouts ändern und per `setLayout` setzen,
- * denn nur so wird auch `floatingBounds` wiederhergestellt (siehe docs/wissen/intellij-plattform/spike-ergebnis.md).
- * Toolfenster, die im aktuellen Layout fehlen oder deren `anchor`/`type` unbekannt ist, werden übersprungen.
+ * Applies [profile] (EDT only). Approach per the spike: modify a copy of the current layout and set it via `setLayout`,
+ * because only that also restores `floatingBounds` (see docs/knowledge/intellij-platform/spike-result.md).
+ * Tool windows missing from the current layout, or with an unknown `anchor`/`type`, are skipped.
  */
 fun applyProfile(project: Project, profile: Profile) {
     val manager = ToolWindowManagerEx.getInstanceEx(project)
@@ -29,28 +29,28 @@ fun applyProfile(project: Project, profile: Profile) {
     for (s in profile.toolWindows) {
         val info = infos[s.id]
         if (info == null) {
-            LOG.info("Übersprungen (fehlt): ${s.id}")
+            LOG.info("Skipped (missing): ${s.id}")
             continue
         }
         try {
             val anchor = parseAnchor(s.anchor)
             val type = parseType(s.type)
             if (anchor == null || type == null) {
-                LOG.warn("Übersprungen (unbekannter Wert anchor=${s.anchor}, type=${s.type}): ${s.id}")
+                LOG.warn("Skipped (unknown value anchor=${s.anchor}, type=${s.type}): ${s.id}")
                 continue
             }
             info.anchor = anchor
             info.isSplit = s.split
             info.type = type
-            // WindowInfoImpl.setType (intern) hält internalType synchron: nur DOCKED und SLIDING sind "intern"
+            // WindowInfoImpl.setType (internal) keeps internalType in sync: only DOCKED and SLIDING are "internal"
             if (type == ToolWindowType.DOCKED || type == ToolWindowType.SLIDING) info.internalType = type
             info.isAutoHide = s.autoHide
             info.isVisible = s.visible
             info.order = s.order
-            if (s.weight > 0f) info.weight = s.weight // 0 = Feld fehlte in der Datei
+            if (s.weight > 0f) info.weight = s.weight // 0 = field was missing in the file
             info.floatingBounds = s.bounds?.let { Rectangle(it.x, it.y, it.width, it.height) }
         } catch (t: Throwable) {
-            LOG.warn("Fehler beim Anwenden: ${s.id}", t)
+            LOG.warn("Failed to apply: ${s.id}", t)
         }
     }
     manager.setLayout(layout)

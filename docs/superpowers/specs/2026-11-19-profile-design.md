@@ -1,23 +1,23 @@
-# Design: Toolfenster-Profile für Rider
+# Design: tool window profiles for Rider
 
-Stand: 2026-11-19 · Status: **Entwurf, wartet auf Freigabe**
-Grundlagen: `PLAN.md`, `docs/wissen/profile/umfang-und-ablage.md`, `docs/wissen/intellij-plattform/toolwindow-api-machbarkeit.md`
+As of 2026-11-19 · Status: **approved** (originally written as a draft awaiting approval)
+Basis: `docs/PLAN.md`, `docs/knowledge/profile/scope-and-storage.md`, `docs/knowledge/intellij-platform/toolwindow-api-feasibility.md`
 
-## Ziel
-Der Nutzer speichert die aktuelle Anordnung der Toolfenster als benanntes **Profil**, verwaltet mehrere Profile und wechselt per Klick zwischen ihnen. `Window > Layouts` kann das nicht (keine Profilverwaltung).
+## Goal
+The user saves the current arrangement of the tool windows as a named **profile**, manages several profiles and switches between them with a click. `Window > Layouts` cannot do that (no profile management).
 
-## Umfang
-**Im Profil, je Toolfenster:** Seite (left/right/bottom/top), Split (oben/unten), offen/zu, ViewMode (`type` + `autoHide`), Position/Größe bei abgedockten Fenstern (`floatingBounds`), Größe/Reihenfolge der angedockten Fenster (`weight`, `order`), soweit der Spike sie als wiederherstellbar bestätigt.
-**Nicht im Umfang:** Editor-Splits, offene Dateien, Hauptfenstergröße, Export/Import, Shortcuts, Teilen im Team.
+## Scope
+**In the profile, per tool window:** side (left/right/bottom/top), split (upper/lower), open/closed, view mode (`type` + `autoHide`), position/size of undocked windows (`floatingBounds`), size/order of docked windows (`weight`, `order`), as far as the spike confirms they can be restored.
+**Out of scope:** editor splits, open files, main window size, export/import, shortcuts, sharing within a team.
 
-## Bedienung
-Untermenü **`Window > Profile`**:
-- Liste der gespeicherten Profile: Klick wendet das Profil an.
-- **Speichern als…**: Namen eingeben, aktuellen Zustand speichern. Existiert der Name schon, wird nach Bestätigung überschrieben.
-- **Verwalten…**: Dialog mit Liste, Aktionen **Umbenennen** und **Löschen**.
+## Usage
+Submenu **`Window > Profiles`**:
+- List of saved profiles: a click applies the profile.
+- **Save as…**: enter a name, save the current state. If the name already exists, it is overwritten after confirmation.
+- **Manage…**: dialog with a list, actions **Rename** and **Delete**.
 
-## Ablage
-Eine Datei `<IDE-Config>/layoutmanager/profiles.json` (global, über `PathManager.getConfigPath()`). Inhalt:
+## Storage
+One file `<IDE-Config>/digoso.JbWindowManager/profiles.json` (global, via `PathManager.getConfigPath()`). Content:
 
 ```json
 {
@@ -34,35 +34,35 @@ Eine Datei `<IDE-Config>/layoutmanager/profiles.json` (global, über `PathManage
   ]
 }
 ```
-`bounds` (`x, y, width, height`) nur bei `FLOATING`/`WINDOWED`. Das Format ist bewusst vom internen `WindowInfoImpl` entkoppelt.
+`bounds` (`x, y, width, height`) only for `FLOATING`/`WINDOWED`. The format is deliberately decoupled from the internal `WindowInfoImpl`.
 
-## Bausteine
-| Baustein | Aufgabe |
+## Components
+| Component | Responsibility |
 |---|---|
-| `Profile`, `ToolWindowState` | Datenklassen für das JSON-Modell |
-| `ProfileStore` | Application-Service: laden, speichern, hinzufügen/ersetzen, umbenennen, löschen (liest/schreibt die JSON-Datei) |
-| `LayoutCapture` | Liest den Ist-Zustand aller Toolfenster des Projekts (Weg laut Spike: `ToolWindowManagerEx.getLayout().getInfos()`) |
-| `LayoutApply` | Wendet ein Profil an: pro vorhandenem Toolfenster Seite → Split → ViewMode → Sichtbarkeit setzen. Unbekannte IDs werden **übersprungen**. |
-| Aktionen | `ProfilesActionGroup` (dynamische Kinder unter `Window > Profile`), `SaveProfileAction`, `ManageProfilesAction` (+ Dialog) |
+| `Profile`, `ToolWindowState` | data classes for the JSON model |
+| `ProfileStore` | application service: load, save, add/replace, rename, delete (reads/writes the JSON file) |
+| `LayoutCapture` | reads the current state of all tool windows of the project (route according to the spike: `ToolWindowManagerEx.getLayout().getInfos()`) |
+| `LayoutApply` | applies a profile: for each existing tool window set side → split → view mode → visibility. Unknown ids are **skipped**. |
+| Actions | `ProfilesActionGroup` (dynamic children under `Window > Profiles`), `SaveProfileAction`, `ManageProfilesAction` (+ dialog) |
 
-JSON per Gson (von der Plattform mitgeliefert, Verfügbarkeit im Rider-Classpath **ungeprüft**; sonst Alternative wählen). Alle Zugriffe auf Toolfenster im EDT.
+JSON via Gson (shipped with the platform, availability on the Rider classpath **unverified** at the time; otherwise pick an alternative). All tool window access on the EDT.
 
-## Fehlerbehandlung
-- Ungültige oder nicht lesbare `profiles.json`: nicht überschreiben, Fehler loggen, dem Nutzer eine Benachrichtigung zeigen und mit leerer Liste weiterarbeiten.
-- Schreiben atomar (temporäre Datei, dann umbenennen), damit kein halber Stand bleibt.
-- Anwenden ist best effort: ein Toolfenster, das sich nicht setzen lässt, bricht das Profil nicht ab (Fehler loggen, weiter).
+## Error handling
+- Invalid or unreadable `profiles.json`: do not overwrite, log the error, show the user a notification and continue with an empty list.
+- Writes are atomic (temporary file, then rename) so no half-written state remains.
+- Applying is best effort: a tool window that cannot be set does not abort the profile (log the error, continue).
 
 ## Tests
-- Automatisch: ein Test für JSON-Roundtrip und `ProfileStore` (hinzufügen, ersetzen, umbenennen, löschen, fehlerhafte Datei).
-- Manuell in `runIde`: Speichern und Anwenden mit dem Beispiel „Explorer left/top, Commit left/bottom“, offen/zu, Float/Window mit Position.
+- Automatic: tests for JSON round trip and `ProfileStore` (add, replace, rename, delete, corrupt file).
+- Manual in `runIde`: save and apply with the example "Explorer left/top, Commit left/bottom", open/closed, Float/Window with position.
 
-## Spike (vor der Umsetzung)
-Klärt, was Anwenden wirklich leisten kann (siehe Machbarkeitsdoku):
-1. Ergibt die Reihenfolge `setAnchor` → `setSplitMode` → `setType` → `show/hide` das gewünschte Ergebnis?
-2. Ist `floatingBounds` wiederherstellbar (öffentlich oder nur über `DesktopLayout` + `setLayout`)?
-3. Verhält sich Rider wie IntelliJ?
-4. Sind `ToolWindowManagerEx`/`DesktopLayout` gegen Rider 2026.3 nutzbar?
-Ergebnis steuert, ob `LayoutApply` rein öffentliche API nutzt oder zusätzlich `setLayout`. Eingeschränkte Wiederherstellung (z. B. ohne Fensterposition) wird dann bewusst dokumentiert.
+## Spike (before implementation)
+Clarifies what applying can really achieve (see the feasibility doc):
+1. Does the order `setAnchor` → `setSplitMode` → `setType` → `show/hide` give the desired result?
+2. Can `floatingBounds` be restored (publicly or only via `DesktopLayout` + `setLayout`)?
+3. Does Rider behave like IntelliJ?
+4. Are `ToolWindowManagerEx`/`DesktopLayout` usable against Rider 2026.3?
+The result decides whether `LayoutApply` uses the public API only or additionally `setLayout`. Limited restoration (e.g. without window position) is then documented deliberately.
 
-## Voraussetzungen
-JDK 21 und Gradle-Wrapper fehlen noch (siehe `PLAN.md`). Plugin-ID, Paketname und Vendor sind noch Platzhalter.
+## Prerequisites
+JDK 21 and the Gradle wrapper were still missing (see `docs/PLAN.md`). Plugin id, package name and vendor were still placeholders. Both have since been resolved.
