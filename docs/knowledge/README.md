@@ -14,5 +14,6 @@ Findings by topic. Rules: see `.claude/CLAUDE.md`. One entry per file: `- [Title
 ## build
 - [Plugin Verifier](build/plugin-verifier.md) – `verifyPlugin`: result, configuration, quirks
 - [Gradle setup against Rider 2026.3](build/gradle-setup.md) – confirmed versions, `riderPath`, quirks
+- [Publishing and signing](build/publishing-and-signing.md) – Marketplace upload, optional signing, from the docs (untried)
 
 ## testing
