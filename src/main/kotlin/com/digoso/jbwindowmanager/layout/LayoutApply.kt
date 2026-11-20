@@ -10,13 +10,6 @@ import java.awt.Rectangle
 
 private val LOG = Logger.getInstance("digoso.JbWindowManager.Apply")
 
-internal fun parseAnchor(s: String): ToolWindowAnchor? =
-    listOf(ToolWindowAnchor.LEFT, ToolWindowAnchor.RIGHT, ToolWindowAnchor.BOTTOM, ToolWindowAnchor.TOP).firstOrNull { anchorName(it) == s }
-
-internal fun anchorName(a: ToolWindowAnchor): String = a.toString()
-
-internal fun parseType(s: String): ToolWindowType? = ToolWindowType.entries.firstOrNull { it.name == s }
-
 /**
  * Applies [profile] (EDT only). Approach per the spike: modify a copy of the current layout and set it via `setLayout`,
  * because only that also restores `floatingBounds` (see docs/knowledge/intellij-platform/spike-result.md).

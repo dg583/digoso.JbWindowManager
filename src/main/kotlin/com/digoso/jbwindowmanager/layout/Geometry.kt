@@ -2,9 +2,21 @@ package com.digoso.jbwindowmanager.layout
 
 import com.digoso.jbwindowmanager.model.Rel
 import com.digoso.jbwindowmanager.model.ToolWindowState
+import com.intellij.openapi.wm.ToolWindowAnchor
+import com.intellij.openapi.wm.ToolWindowType
 import java.awt.Rectangle
 import kotlin.math.abs
 import kotlin.math.roundToInt
+
+internal val ANCHORS = listOf(ToolWindowAnchor.LEFT, ToolWindowAnchor.RIGHT, ToolWindowAnchor.BOTTOM, ToolWindowAnchor.TOP)
+
+internal fun parseAnchor(s: String): ToolWindowAnchor? = ANCHORS.firstOrNull { anchorName(it) == s }
+
+internal fun anchorName(a: ToolWindowAnchor): String = a.toString()
+
+internal fun parseType(s: String): ToolWindowType? = ToolWindowType.entries.firstOrNull { it.name == s }
+
+internal fun isHorizontalSide(a: ToolWindowAnchor): Boolean = a == ToolWindowAnchor.LEFT || a == ToolWindowAnchor.RIGHT
 
 /** [r] as fractions of [screen]; null for a screen without area (no sensible fraction). */
 internal fun relOf(r: Rectangle, screen: Rectangle): Rel? {
