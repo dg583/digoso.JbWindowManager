@@ -1,23 +1,17 @@
-name: Build
+name: Unit tests
 
+# Only unit tests run remotely. Build, verifier and manual checks run locally.
 on:
-  push:
-    branches: [master, main]
   pull_request:
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
-      # Rider is downloaded twice (build and verifier): the default runner disk (~14 GB free) is too small otherwise
-      - name: Free disk space
-        run: |
-          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
-          df -h /
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
       - uses: gradle/actions/setup-gradle@v4
-      - run: ./gradlew test buildPlugin verifyPlugin
+      - run: ./gradlew test

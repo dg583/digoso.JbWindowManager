@@ -75,4 +75,4 @@ Rules:
 ## Docs map
 - `README.md`: user-facing overview. `CHANGELOG.md`: Keep a Changelog, update on user-visible changes.
 - `docs/PLAN.md`: status and decisions. `docs/superpowers/`: design specs and implementation plans.
-- CI: `.github/workflows/build.yml` (`test buildPlugin verifyPlugin`).
+- CI: `.github/workflows/build.yml` runs only `./gradlew test` on pull requests. Build, `verifyPlugin` and manual checks run locally (the runner disk is too small for two Rider downloads).

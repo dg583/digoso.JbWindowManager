@@ -22,7 +22,7 @@ JetBrains plugin for **Rider**: save the arrangement of the tool windows as a na
 ## Structure
 ```
 build.gradle.kts / settings.gradle.kts / gradle.properties
-.github/workflows/build.yml   CI: test, buildPlugin, verifyPlugin
+.github/workflows/build.yml   CI: unit tests on pull requests (everything else runs locally)
 CHANGELOG.md
 src/main/kotlin/com/digoso/jbwindowmanager/
   model/Profile.kt            data model (Profile, ToolWindowState, Bounds)
