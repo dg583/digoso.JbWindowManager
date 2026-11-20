@@ -1,8 +1,11 @@
 package com.digoso.jbwindowmanager.store
 
 import com.digoso.jbwindowmanager.model.Bounds
+import com.digoso.jbwindowmanager.model.CURRENT_VERSION
+import com.digoso.jbwindowmanager.model.FrameState
 import com.digoso.jbwindowmanager.model.Profile
 import com.digoso.jbwindowmanager.model.ProfileFile
+import com.digoso.jbwindowmanager.model.Rel
 import com.digoso.jbwindowmanager.model.ToolWindowState
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -45,7 +48,84 @@ class ProfileStoreTest {
 
     @Test
     fun newerVersionIsRejected() {
-        assertThrows(IllegalArgumentException::class.java) { ProfileJson.fromJson("""{"version":2,"profiles":[]}""") }
+        assertThrows(IllegalArgumentException::class.java) { ProfileJson.fromJson("""{"version":3,"profiles":[]}""") }
+    }
+
+    @Test
+    fun roundtripKeepsFrameAndRel() {
+        val f = ProfileFile(
+            CURRENT_VERSION,
+            listOf(
+                Profile(
+                    "P",
+                    listOf(ToolWindowState("Database", "right", false, "WINDOWED", false, true, 3, 0f, null, Rel(0.49, 0.56, 0.51, 0.41))),
+                    FrameState(false, true, Rel(0.1, 0.2, 0.5, 0.6)),
+                ),
+            ),
+        )
+        assertEquals(f, ProfileJson.fromJson(ProfileJson.toJson(f)))
+    }
+
+    private val version1 = """
+        {"version":1,"profiles":[{"name":"Old","toolWindows":[
+          {"id":"Commit","anchor":"left","split":true,"type":"FLOATING","autoHide":false,"visible":false,"order":1,"weight":0.3,
+           "bounds":{"x":10,"y":20,"width":300,"height":400}}]}]}
+    """.trimIndent()
+
+    @Test
+    fun version1FileIsReadWithoutFrame() {
+        val p = ProfileJson.fromJson(version1).profiles.single()
+        assertNull(p.frame)
+        assertNull(p.toolWindows[0].rel)
+        assertEquals(Bounds(10, 20, 300, 400), p.toolWindows[0].bounds)
+    }
+
+    @Test
+    fun saveUpgradesVersion1ToCurrent() {
+        val path = file()
+        Files.createDirectories(path.parent)
+        Files.writeString(path, version1)
+        ProfileStore(path).save(profile("New"))
+        assertEquals(CURRENT_VERSION, ProfileJson.fromJson(Files.readString(path)).version)
+    }
+
+    private fun windowJson(extra: String) =
+        """{"version":2,"profiles":[{"name":"P","toolWindows":[{"id":"X","anchor":"left","split":false,"type":"WINDOWED","autoHide":false,"visible":true,"order":0,"weight":0.0,$extra}]}]}"""
+
+    @Test
+    fun relWithMissingValuesIsRejected() {
+        // Gson would turn the missing w/h into 0.0 and the window would be set to a 0x0 rect
+        assertThrows(IllegalArgumentException::class.java) { ProfileJson.fromJson(windowJson(""""rel":{"x":0.1,"y":0.2}""")) }
+    }
+
+    @Test
+    fun relWithNonPositiveSizeIsRejected() {
+        assertThrows(IllegalArgumentException::class.java) { ProfileJson.fromJson(windowJson(""""rel":{"x":0.1,"y":0.2,"w":0.0,"h":0.5}""")) }
+    }
+
+    @Test
+    fun frameRelWithNonPositiveSizeIsRejected() {
+        val json = """{"version":2,"profiles":[{"name":"P","toolWindows":[],"frame":{"fullscreen":false,"maximized":false,"rel":{"x":0.0,"y":0.0,"w":0.5,"h":0.0}}}]}"""
+        assertThrows(IllegalArgumentException::class.java) { ProfileJson.fromJson(json) }
+    }
+
+    @Test
+    fun nonFiniteRelOrWeightIsRejected() {
+        assertThrows(IllegalArgumentException::class.java) { ProfileJson.fromJson(windowJson(""""rel":{"x":NaN,"y":0.2,"w":0.5,"h":0.5}""")) }
+        assertThrows(IllegalArgumentException::class.java) { ProfileJson.fromJson(windowJson(""""weight":NaN""").replace(""""weight":0.0,""", "")) }
+    }
+
+    @Test
+    fun validRelIsAccepted() {
+        val rel = ProfileJson.fromJson(windowJson(""""rel":{"x":-0.1,"y":0.2,"w":0.5,"h":0.5}""")).profiles.single().toolWindows.single().rel
+        assertEquals(Rel(-0.1, 0.2, 0.5, 0.5), rel)
+    }
+
+    @Test
+    fun frameWithoutFlagsIsAccepted() {
+        val json = """{"version":2,"profiles":[{"name":"P","toolWindows":[],"frame":{"rel":null}}]}"""
+        val frame = ProfileJson.fromJson(json).profiles.single().frame
+        assertEquals(FrameState(false, false, null), frame)
     }
 
     // --- ProfileStore ---
@@ -121,7 +201,7 @@ class ProfileStoreTest {
     fun newerVersionFileIsNotOverwritten() {
         val f = file()
         Files.createDirectories(f.parent)
-        val text = """{"version":2,"profiles":[]}"""
+        val text = """{"version":3,"profiles":[]}"""
         Files.writeString(f, text)
         val store = ProfileStore(f)
         assertNotNull(store.loadError)

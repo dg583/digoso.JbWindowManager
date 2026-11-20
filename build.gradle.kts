@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "com.digoso.jbwindowmanager"
-version = "0.1.0"
+version = "0.2.0"
 
 repositories {
     mavenCentral()
@@ -32,7 +32,7 @@ intellijPlatform {
         ideaVersion { sinceBuild = "263" }
     }
     pluginVerification {
-        // Internal API (DesktopLayout) is accepted on purpose (needed for floatingBounds); only real breakages fail the verification
+        // Only real breakages fail the verification. The plugin uses no internal API: keep internal-api-usages at 0 (Marketplace check)
         failureLevel = listOf(
             org.jetbrains.intellij.platform.gradle.tasks.VerifyPluginTask.FailureLevel.COMPATIBILITY_PROBLEMS,
             org.jetbrains.intellij.platform.gradle.tasks.VerifyPluginTask.FailureLevel.INVALID_PLUGIN,

@@ -11,7 +11,7 @@
 
 ## Commands
 ```
-./gradlew test                                  # unit tests (22)
+./gradlew test                                  # unit tests (38)
 ./gradlew buildPlugin                           # ZIP in build/distributions
 ./gradlew verifyPlugin                          # Plugin Verifier against Rider 2026.3 (~1.5 min, ~370 MB cache)
 ./gradlew runIde                                # sandbox Rider with the plugin
@@ -33,7 +33,8 @@ actions/                  Window > Profiles menu, Save as…, Manage… dialog
 src/main/resources/META-INF/plugin.xml
 ```
 Key points:
-- **Apply goes through internal API** `ToolWindowManagerEx.setLayout` / `DesktopLayout` (5 accepted Internal-API usages). Only `setLayout` restores `floatingBounds`; the public API does not (`docs/knowledge/intellij-platform/spike-result.md`). Adjust here first when a new IDE version breaks.
+- **Public API only, no internal API** (the Marketplace check flagged `DesktopLayout`). Capture/apply use `ToolWindow`, `ToolWindowManagerEx.getIdsOn/toolWindows`, `ToolWindowEx.stretchWidth/Height`, the Swing window of floating windows and `WindowManager.getFrame`. Positions are stored relative to the main frame's screen (`layout/Geometry.kt`). Apply is an asynchronous sequence (frame, tool windows, window bounds, converging size passes). Fullscreen is untested. Details and pitfalls: `docs/knowledge/intellij-platform/public-api-spike.md`. Adjust there first when a new IDE version breaks.
+- Profile file format **version 2** (`frame`, `rel`); version 1 is still read, a save writes version 2.
 - Tool windows missing in the current project are skipped on apply.
 - `ProfileStore`: immutable snapshots, atomic write (tmp file + `ATOMIC_MOVE`), names unique ignoring case. An unreadable file sets `loadError` and blocks all writes (the file stays untouched). IO errors surface as `IllegalStateException` for the UI to show as a dialog.
 - `ProfileJson.fromJson` validates explicitly because Gson sets missing fields to `null` despite Kotlin types.
@@ -42,7 +43,7 @@ Key points:
 
 ## Build and verifier gotchas
 - IntelliJ Platform Gradle Plugin **2.20.1** and Kotlin **2.4.0** are required for Rider 2026.3 (older versions fail on descriptors and Kotlin metadata). `useInstaller = false` for Rider.
-- `verifyPlugin` fails only on `COMPATIBILITY_PROBLEMS` and `INVALID_PLUGIN`, not on internal API usage.
+- `verifyPlugin` fails only on `COMPATIBILITY_PROBLEMS` and `INVALID_PLUGIN`. Internal API usage is not an error there but the Marketplace check reports it: keep it at 0.
 - The plugin description must start with Latin characters and be at least 40 characters long. Plugin ids with the prefix `com.example` are rejected.
 - Details: `docs/knowledge/build/`.
 
@@ -74,4 +75,4 @@ Rules:
 ## Docs map
 - `README.md`: user-facing overview. `CHANGELOG.md`: Keep a Changelog, update on user-visible changes.
 - `docs/PLAN.md`: status and decisions. `docs/superpowers/`: design specs and implementation plans.
-- CI: `.github/workflows/build.yml` (`test buildPlugin verifyPlugin`).
+- CI: `.github/workflows/build.yml` runs only IDE-free unit tests on pull requests (`./gradlew -p ci test`, project `ci/`: model, `ProfileStore`, `Geometry`, no Rider download). `ParseTest`, build, `verifyPlugin` and manual checks run locally. Keep `Geometry.kt` and `ProfileStore.kt` free of IDE types (the stub `ci/stubs` only covers `Logger`).

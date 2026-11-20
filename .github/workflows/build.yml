@@ -1,12 +1,11 @@
-name: Build
+name: Unit tests
 
+# Only IDE-free unit tests run remotely (project `ci/`, no Rider download). Build, verifier and the platform tests run locally.
 on:
-  push:
-    branches: [main]
   pull_request:
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -15,4 +14,4 @@ jobs:
           distribution: temurin
           java-version: 21
       - uses: gradle/actions/setup-gradle@v4
-      - run: ./gradlew test buildPlugin verifyPlugin
+      - run: ./gradlew -p ci test

@@ -5,10 +5,12 @@ A JetBrains IDE plugin that saves the arrangement of your tool windows as named 
 ## Features
 - Save the current tool window arrangement under a name and restore it with one click.
 - Per tool window a profile stores: side (left/right/bottom/top), split position, open/closed, view mode (Dock Pinned/Unpinned, Undock, Float, Window), size/order, and the window position for floating/windowed tool windows.
+- A profile also stores the main window: fullscreen, maximized, or its position and size.
+- Window positions are stored relative to the screen, so a profile adapts when you switch to another screen or resolution.
 - Profiles are global (shared by all projects) and stored as JSON.
 - Tool windows that do not exist in the current project are skipped when a profile is applied.
 
-Not included: editor splits, open files, main window size, export/import, shortcuts.
+Not included: editor splits, open files, export/import, shortcuts. Fullscreen handling is untested.
 
 ## Compatibility
 Built and verified for **Rider 2026.3** (build 263, `sinceBuild = 263`). The plugin only depends on IntelliJ Platform APIs (`com.intellij.modules.platform`), so it should also work in other IntelliJ-based IDEs of the same version, but this has only been tested in Rider.
@@ -35,7 +37,7 @@ Then in the IDE: `Settings > Plugins > ⚙ > Install Plugin from Disk…` and se
 - Requirements: JDK 21
 - More: `docs/PLAN.md`, `docs/knowledge/`, `CHANGELOG.md`
 
-The plugin uses the internal API `DesktopLayout` on purpose, because it is the only way to restore the position of floating tool windows (see `docs/knowledge/intellij-platform/spike-result.md`). It may need adjustments for future IDE versions.
+The plugin uses only public IntelliJ Platform API (see `docs/knowledge/intellij-platform/public-api-spike.md`).
 
 ## License
 [MIT](LICENSE), Copyright (c) 2026 Dirk Goldecker
