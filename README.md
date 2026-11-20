@@ -1,3 +1,5 @@
+[![Unit tests](https://github.com/dg583/digoso.JbWindowManager/actions/workflows/build.yml/badge.svg)](https://github.com/dg583/digoso.JbWindowManager/actions/workflows/build.yml)
+
 # digoso.JbWindowManager
 
 A JetBrains IDE plugin that saves the arrangement of your tool windows as named **profiles**. Save, switch, rename and delete profiles from the `Window` menu. Rider's built-in `Window > Layouts` cannot manage profiles.
